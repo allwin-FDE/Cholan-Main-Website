@@ -1,0 +1,268 @@
+/* ==========================================================================
+   Footer — solid dark green: brand, links, contact, newsletter, a gold
+   rule and the legal bar.
+   ========================================================================== */
+
+.footer {
+  --f-green: #0f2a1c;
+  --f-ink: rgba(255, 248, 230, 0.82);
+  --f-dim: rgba(255, 248, 230, 0.6);
+  --f-line: rgba(232, 187, 86, 0.28);
+  --f-gold: #e8bb56;
+
+  position: relative;
+  color: var(--f-ink);
+  background: var(--f-green);
+}
+
+/* ---------- The footer ---------- */
+
+.footer__main {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Wider than the page container, so five columns have room. */
+.footer__main > .container { max-width: 1360px; }
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: 1.35fr 0.85fr 0.95fr 1.35fr 1.4fr;
+  gap: 0;
+  padding-block: clamp(56px, 7vw, 96px) clamp(44px, 5vw, 72px);
+}
+
+/* Thin gold dividers between the link columns, as in the reference. */
+.footer__col {
+  padding-inline: clamp(22px, 2.8vw, 44px);
+  border-left: 1px solid var(--f-line);
+}
+
+.footer__news { border-left: 1px solid var(--f-line); }
+
+.footer__brand { padding-right: clamp(24px, 3.2vw, 52px); }
+
+/* The logo in cream, so it reads on the dark green. */
+.footer__logo img {
+  display: block;
+  width: clamp(120px, 11vw, 156px);
+  height: auto;
+  filter: brightness(0) invert(0.97) sepia(0.15);
+}
+
+.footer__motto {
+  display: block;
+  margin: 18px 0 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--f-line);
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--f-gold);
+  white-space: nowrap;
+}
+
+.footer__brand p {
+  margin: 0;
+  max-width: 32ch;
+  font-size: 0.82rem;
+  line-height: 1.8;
+  color: var(--f-dim);
+}
+
+.footer h4 {
+  margin: 0 0 22px;
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--f-gold);
+  white-space: nowrap;
+}
+
+.footer__col li { white-space: nowrap; }
+.footer__contact li { white-space: normal; }
+
+.footer__col ul {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.84rem;
+}
+
+.footer__col a {
+  color: var(--f-ink);
+  transition: color 0.2s ease;
+}
+
+.footer__col a:hover { color: var(--f-gold); }
+
+.footer__contact li {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 12px;
+  align-items: start;
+  line-height: 1.6;
+}
+
+.footer__contact svg {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  color: var(--f-gold);
+}
+
+/* ---- Newsletter and social ---- */
+
+.footer__news p {
+  margin: 0 0 18px;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: var(--f-dim);
+}
+
+.footer__form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 5px 5px 16px;
+  border: 1px solid var(--f-line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: border-color 0.2s ease;
+}
+
+.footer__form:focus-within { border-color: var(--f-gold); }
+
+.footer__form input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 0;
+  border: 0;
+  background: transparent;
+  color: #fff8e6;
+  font: inherit;
+  font-size: 0.82rem;
+}
+
+.footer__form input::placeholder { color: var(--f-dim); }
+.footer__form input:focus { outline: none; }
+
+.footer__form button {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--f-gold);
+  color: var(--f-green);
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.footer__form button:hover { background: #f3cb73; transform: translateX(2px); }
+.footer__form button svg { width: 16px; height: 16px; }
+
+.footer__follow { margin-top: 32px !important; }
+
+.footer__social {
+  display: flex;
+  gap: 10px;
+}
+
+.footer__social a {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--f-gold);
+  color: var(--f-gold);
+  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.footer__social svg { width: 16px; height: 16px; }
+
+.footer__social a:hover {
+  background: var(--f-gold);
+  color: var(--f-green);
+  transform: translateY(-3px);
+}
+
+/* ---- Gold rule with an ornament ---- */
+
+.footer__rule {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--f-gold) 20%, var(--f-gold) 80%, transparent);
+  opacity: 0.7;
+}
+
+.footer__rule span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--f-gold);
+  background: var(--f-green);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* ---- Legal bar ---- */
+
+.footer__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  flex-wrap: wrap;
+  padding-block: 24px 28px;
+  font-size: 0.76rem;
+  color: var(--f-dim);
+}
+
+.footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.footer__legal a {
+  color: var(--f-ink);
+  transition: color 0.2s ease;
+}
+
+.footer__legal a:hover { color: var(--f-gold); }
+
+.footer__legal a + a::before {
+  content: "|";
+  margin: 0 14px;
+  color: var(--f-line);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1100px) {
+  .footer__grid { grid-template-columns: 1fr 1fr 1fr; row-gap: 44px; }
+  .footer__brand { grid-column: 1 / -1; padding-right: 0; }
+  .footer__brand p { max-width: 60ch; }
+  .footer__col:nth-child(2) { border-left: 0; padding-left: 0; }
+  .footer__news { grid-column: 1 / -1; border-left: 0; padding-inline: 0; max-width: 460px; }
+}
+
+@media (max-width: 700px) {
+  .footer__grid { grid-template-columns: 1fr 1fr; }
+  .footer__col:nth-child(4) { grid-column: 1 / -1; border-left: 0; padding-left: 0; }
+  .footer__bar { justify-content: center; text-align: center; }
+  .footer__legal { justify-content: center; }
+}

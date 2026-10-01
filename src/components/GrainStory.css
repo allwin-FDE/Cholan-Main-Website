@@ -1,0 +1,436 @@
+/* ==========================================================================
+   The grain's journey — one pinned stage, four cross-fading beats.
+   Layout follows the reference: number and title left, artwork centre,
+   a short aside right, a progress rail on the far right.
+   ========================================================================== */
+
+.grain {
+  position: relative;
+  background: var(--surface-alt, #faf8f3);
+}
+
+/* The sticky header owns the top of the viewport in both pinned and unpinned
+   states, so the stage is a viewport LESS that bar — a full 100vh here pushes
+   the artwork and the scroll cue below the fold. */
+.grain__stage {
+  position: relative;
+  height: calc(100vh - var(--header-h, 74px));
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+/* Every beat occupies the SAME cell, stacked, so they cross-fade in place
+   rather than pushing each other around. */
+.grain__beat {
+  grid-area: 1 / 1;
+  position: relative;
+  width: min(1280px, 92vw);
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) minmax(0, 1.35fr) minmax(180px, 1fr);
+  align-items: center;
+  gap: clamp(16px, 3vw, 48px);
+  pointer-events: none;
+}
+
+/* ---- Left column: number, title, lede ----
+   The drift wrapper is the grid child now, so it takes the column and the
+   copy inside it just fills that. */
+
+.grain__drift--text {
+  grid-column: 1;
+  align-self: center;
+}
+
+.grain__text {
+  max-width: 34ch;
+}
+
+.grain__num {
+  display: block;
+  font-size: 0.82rem;
+  letter-spacing: 0.2em;
+  color: var(--brand-700, #285737);
+  opacity: 0.55;
+  margin-bottom: 10px;
+}
+
+/* The rule under the number, as in the reference. */
+.grain__num::after {
+  content: "";
+  display: block;
+  width: 26px;
+  height: 1px;
+  margin-top: 12px;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+.grain__text h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 3.6vw, 3.1rem);
+  line-height: 1.1;
+  margin: 0 0 14px;
+  color: var(--brand-900, #16301f);
+}
+
+.grain__lede {
+  margin: 0;
+  font-size: clamp(0.92rem, 1.2vw, 1.05rem);
+  line-height: 1.6;
+  color: var(--ink-soft, #5d6b5f);
+  max-width: 22ch;
+}
+
+/* ---- Air streaks ----
+   Fine lines rushing past the grain.
+
+   They travel UPWARD, with the side copy rather than against it. Read as
+   airflow past a falling object the physical direction would be downward,
+   but read as the surroundings streaming past the camera — which is what the
+   copy's upward drift already establishes — up is the consistent choice, and
+   the whole frame then moves as one.
+
+   Behind the artwork and pinned to the stage rather than to a beat, so they
+   run continuously across all four rather than restarting at every
+   hand-off. */
+
+.grain__air {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.grain__streak {
+  position: absolute;
+  left: var(--x);
+  top: 0;
+  width: 1px;
+  height: var(--len);
+  border-radius: 1px;
+  /* Tapered at both ends: a hard-ended line reads as a rule, a faded one as
+     motion. */
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(120, 104, 68, 0.28) 22%,
+    rgba(120, 104, 68, 0.34) 55%,
+    transparent
+  );
+  /*
+    No CSS animation. The streaks are driven by the scroll instead — they
+    exist to say "this is falling", and a loop running on its own clock keeps
+    claiming that while the reader is stopped, which is exactly when nothing
+    should be moving. GSAP scrubs them from the same ScrollTrigger as the rest
+    of the section, so they travel only while the page does.
+
+    Hidden until the scroll starts them; the timeline sets opacity.
+  */
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* Nearer the grain: brighter, and a touch wider. Speed comes from the
+   per-streak --dur in the data rather than from this class. */
+.grain__streak--near {
+  width: 1.6px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(104, 88, 52, 0.44) 20%,
+    rgba(104, 88, 52, 0.52) 55%,
+    transparent
+  );
+}
+
+/* Scene-setting only: on a phone the artwork and the copy need the frame
+   more than the streaks do, and ten animating layers is the most expensive
+   thing here. */
+@media (max-width: 800px) {
+  .grain__air { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain__air { display: none; }
+}
+
+/* ---- Centre: the artwork ---- */
+
+.grain__art {
+  grid-column: 2;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  height: 100%;
+  /* Promoted up front: these are large images being faded and moved together,
+     and promoting them mid-transition causes a hitch on the first frame. */
+  will-change: transform, opacity;
+  /*
+    Stated explicitly, and the same for every beat: the hand-off scales and
+    rotates the outgoing and incoming assets onto each other, and they only
+    register if both pivot about the same point. Left to the default this is
+    already 50% 50%, but it must not drift if the box sizes differ.
+  */
+  transform-origin: 50% 50%;
+}
+
+/* The drifting layer: holds the continuous UPWARD travel of the side copy,
+   so the swap — which animates the copy itself — never overwrites it. The
+   artwork stays put and the copy moving past it is what reads as the fall. */
+.grain__drift {
+  will-change: transform;
+}
+
+/*
+  Beat 01's two layers, stacked in exact register.
+
+  The husk and the sprout were cut from ONE image, so they only line up if
+  both are laid out at the same size in the same box — hence the grid with a
+  single cell rather than absolute positioning against differing intrinsic
+  sizes. The sprout can then be transformed on its own (it retracts into the
+  husk) without the husk moving.
+*/
+.grain__layers {
+  display: grid;
+  place-items: center;
+}
+
+.grain__layers > * {
+  grid-area: 1 / 1;
+}
+
+/* The sprout pivots at its base, where it meets the shoot — a sprout
+   withdrawing goes back into the seed, it does not shrink about its middle. */
+.grain__sprout {
+  transform-origin: 50% 88%;
+  will-change: transform;
+}
+
+.grain__art picture,
+.grain__art img {
+  display: block;
+  max-width: 100%;
+  /*
+    Measured against the stage, which is a viewport less the header — a raw
+    vh here overflows the pinned frame and clips the artwork's base.
+
+    0.72 rather than the 0.64 it needed before: the artwork no longer drifts
+    downward, so it does not have to reserve ~14vh of travel at the bottom
+    and can use more of the frame.
+  */
+  max-height: calc((100vh - var(--header-h, 74px)) * 0.72);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* ---- Right: the aside ---- */
+
+.grain__drift--aside {
+  grid-column: 3;
+  align-self: center;
+  justify-self: end;
+}
+
+.grain__aside {
+  margin: 0;
+  max-width: 20ch;
+  /* Clear the progress rail, which is absolutely positioned against the
+     stage's right edge — without this the italic runs under the digits. */
+  padding-right: clamp(26px, 3vw, 46px);
+  text-align: right;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(0.85rem, 1.05vw, 1rem);
+  line-height: 1.65;
+  color: var(--brand-700, #285737);
+  opacity: 0.78;
+}
+
+.grain__aside::before {
+  content: "";
+  display: block;
+  width: 22px;
+  height: 1px;
+  margin: 0 0 14px auto;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+/* ---- Progress rail ---- */
+
+.grain__rail {
+  position: absolute;
+  top: 50%;
+  right: clamp(8px, 2.2vw, 40px);
+  transform: translateY(-50%);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 14px;
+  z-index: 3;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--brand-700, #285737);
+  pointer-events: none;
+}
+
+.grain__mark {
+  position: relative;
+  padding-right: 16px;
+  text-align: right;
+  transition: opacity 0.2s ease;
+}
+
+/* The dot beside the active number. */
+.grain__mark::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  margin-top: -2.5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.grain__mark[style*="opacity: 1"]::after {
+  opacity: 1;
+}
+
+/* ---- Scroll cue ---- */
+
+.grain__cue {
+  position: absolute;
+  left: clamp(8px, 2.2vw, 40px);
+  bottom: clamp(20px, 5vh, 56px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft, #5d6b5f);
+  opacity: 0.7;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.grain__cue-dot {
+  width: 9px;
+  height: 9px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  position: relative;
+}
+
+.grain__cue-dot::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -18px;
+  width: 1px;
+  height: 14px;
+  margin-left: -0.5px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+/* ==========================================================================
+   Narrow screens: the three-column layout has nowhere to go, so the beat
+   stacks — text above, artwork below — and the aside and rail step aside.
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .grain__beat {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    align-content: center;
+    gap: clamp(12px, 3vh, 28px);
+    text-align: center;
+    padding-block: clamp(56px, 10vh, 96px);
+  }
+
+  /* The wrapper is the grid child, so it takes the row placement. */
+  .grain__drift--text {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: center;
+  }
+
+  .grain__text { max-width: none; }
+
+  .grain__num::after { margin-inline: auto; }
+  .grain__lede { max-width: 30ch; margin-inline: auto; }
+
+  .grain__art {
+    grid-column: 1;
+    grid-row: 2;
+    min-height: 0;
+  }
+
+  .grain__art picture,
+  .grain__art img { max-height: calc((100vh - var(--header-h, 74px)) * 0.46); }
+
+  /* Both would crowd a phone frame; the numbers carry the progress alone.
+     The wrapper goes too, or it holds an empty grid cell. */
+  .grain__drift--aside,
+  .grain__cue { display: none; }
+
+  /*
+    A horizontal rail along the bottom, not a vertical one at the edge: with
+    the beat stacked the artwork fills the width, and side-mounted numbers
+    printed straight over the grain.
+  */
+  .grain__rail {
+    top: auto;
+    bottom: clamp(14px, 3vh, 28px);
+    right: 50%;
+    transform: translateX(50%);
+    grid-auto-flow: column;
+    gap: 18px;
+    font-size: 0.6rem;
+  }
+
+  .grain__mark { padding-right: 0; padding-bottom: 10px; text-align: center; }
+
+  .grain__mark::after {
+    right: 50%;
+    top: auto;
+    bottom: 0;
+    margin: 0 -2.5px 0 0;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion: no pin, no scrub. The beats lay out in normal flow and the
+   story reads as a sequence of blocks.
+   ========================================================================== */
+
+.grain--static .grain__stage {
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.grain--static .grain__beat {
+  height: auto;
+  min-height: 0;
+  padding-block: clamp(48px, 9vh, 96px);
+  opacity: 1;
+}
+
+.grain--static .grain__art picture,
+.grain--static .grain__art img { max-height: 44vh; }
+
+/* No fall without the scrub driving it. */
+.grain--static .grain__drift { transform: none; }
+
+.grain--static .grain__rail,
+.grain--static .grain__cue { display: none; }

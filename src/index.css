@@ -1,0 +1,287 @@
+/* ==========================================================================
+   Cholan Rice & Millets — design tokens + base styles
+   Retheme the whole site by editing the :root block below.
+   ========================================================================== */
+
+:root {
+  /* --- Brand palette. Earthy paddy-field greens + harvest gold. --- */
+  --brand-900: #16301f;
+  --brand-800: #1d4029;
+  --brand-700: #285737;
+  --brand-600: #35704a;
+  --brand-500: #4a8f60;
+  --brand-100: #e4efe6;
+  --brand-50: #f2f8f3;
+
+  --gold-600: #b07d1d;
+  --gold-500: #d29b2c;
+  --gold-400: #e8bb56;
+  --gold-100: #f8eed6;
+
+  /* --- Neutrals --- */
+  --ink: #1a1a17;
+  --ink-soft: #4a4a44;
+  --ink-mute: #7a7a71;
+  --line: #e2e0d8;
+  --surface: #ffffff;
+  --surface-alt: #faf8f3;
+  --surface-deep: #f3efe5;
+  /* The page itself, behind every section: a soft warm white. */
+  --page-bg: #fbfaf6;
+
+  /* --- Type --- */
+  --font-display: "Fraunces", "Georgia", "Times New Roman", serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* --- Spacing / shape --- */
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 22px;
+  --shadow-sm: 0 1px 2px rgba(26, 26, 23, 0.06);
+  --shadow: 0 6px 20px rgba(26, 26, 23, 0.08);
+  --shadow-lg: 0 18px 48px rgba(26, 26, 23, 0.14);
+
+  --container: 1200px;
+  --gutter: 24px;
+  --section-y: 88px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--page-bg);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/*
+  The one background, behind every page and every section: the warm white,
+  a soft pool of harvest gold high on the right, a hint of paddy green low on
+  the left, and a faint dot grid. Fixed to the screen on its own layer, so it
+  stays put as the page scrolls without repainting on every frame. Sections
+  set no background of their own and let this show through.
+*/
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 45% at 100% 0%, rgba(232, 187, 86, 0.13), transparent 70%),
+    radial-gradient(ellipse 50% 45% at 0% 100%, rgba(74, 143, 96, 0.08), transparent 70%),
+    radial-gradient(rgba(176, 125, 29, 0.07) 1px, transparent 1.4px) 0 0 / 26px 26px,
+    var(--page-bg);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5em;
+  color: var(--brand-900);
+}
+
+h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
+h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); }
+h3 { font-size: clamp(1.15rem, 2vw, 1.4rem); }
+
+p { margin: 0 0 1em; }
+
+/* ---------- Layout primitives ---------- */
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: var(--section-y);
+}
+
+/* Kept as hooks, but every section shares the one page background. */
+.section--alt,
+.section--deep {
+  background: transparent;
+}
+
+.section-head {
+  max-width: 640px;
+  margin-bottom: 48px;
+}
+
+.section-head--center {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-600);
+  margin-bottom: 12px;
+}
+
+.lede {
+  font-size: 1.08rem;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.grid {
+  display: grid;
+  gap: 28px;
+}
+
+.grid--2 { grid-template-columns: repeat(2, 1fr); }
+.grid--3 { grid-template-columns: repeat(3, 1fr); }
+.grid--4 { grid-template-columns: repeat(4, 1fr); }
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 26px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+
+.btn--primary {
+  background: var(--brand-700);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+.btn--primary:hover { background: var(--brand-800); box-shadow: var(--shadow); }
+
+.btn--gold {
+  background: var(--gold-500);
+  color: var(--brand-900);
+}
+.btn--gold:hover { background: var(--gold-400); }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--brand-800);
+  border-color: var(--line);
+}
+.btn--ghost:hover { border-color: var(--brand-600); background: var(--brand-50); }
+
+.btn--light {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px);
+}
+.btn--light:hover { background: rgba(255, 255, 255, 0.24); }
+
+.btn--sm { padding: 9px 18px; font-size: 0.86rem; }
+.btn--block { width: 100%; }
+
+/* ---------- Utility ---------- */
+
+.stack { display: flex; flex-direction: column; }
+.row { display: flex; align-items: center; }
+.gap-8 { gap: 8px; }
+.gap-12 { gap: 12px; }
+.gap-16 { gap: 16px; }
+.wrap { flex-wrap: wrap; }
+.center { text-align: center; }
+.muted { color: var(--ink-mute); }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Placeholder tone for images that do not exist yet. */
+.ph {
+  background: linear-gradient(135deg, var(--brand-100), var(--surface-deep));
+  display: grid;
+  place-items: center;
+  color: var(--brand-600);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 12px;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 960px) {
+  :root { --section-y: 64px; }
+  .grid--4 { grid-template-columns: repeat(2, 1fr); }
+  .grid--3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  :root { --section-y: 52px; --gutter: 18px; }
+  .grid--2,
+  .grid--3,
+  .grid--4 { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- App shell: sticky footer ---------- */
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-shell main { flex: 1; }

@@ -1,0 +1,473 @@
+/* ==========================================================================
+   Hero — static stage framed by a carved pillar on each side.
+   Warm yellow ground; the pillar art is recoloured to the same tone so the
+   rails sit flush against the stage with no visible seam.
+   ========================================================================== */
+
+.curtain {
+  /*
+    One source of truth for the ground. Set to the exact tone JPEG
+    compression leaves in the pillar artwork (#fce08c, measured) rather than
+    the nominal #fde08c it was encoded from — matching the image means the
+    rails have no tonal edge against the stage at all.
+  */
+  --stage: #fce08c;
+
+  --gutter: clamp(24px, 5vw, 88px);
+
+  position: relative;
+  z-index: 2;
+  /*
+    Pulled up under the transparent header so the pillars run to the very top
+    of the page. The bar is sticky and so still occupies its height in flow —
+    without this negative margin the hero starts below it and leaves a band
+    above the stage.
+  */
+  margin-top: calc(var(--header-h, 74px) * -1);
+  min-height: 100vh;
+}
+
+/*
+  The frame: a full viewport, since the hero is pulled up under the
+  transparent header.
+*/
+.curtain__pin {
+  position: relative;
+  height: 100vh;
+  min-height: 560px;
+  overflow: hidden;
+}
+
+/* ---- The pillars ----
+   Decorative rails on both edges of the stage, filling the full height.
+
+   The artwork (hero-pillar-carved.webp, 329x1645) is a cut-out on a
+   transparent ground, trimmed to the pillar itself, so it sits on the stage
+   with no seam and needs no edge mask. */
+
+.curtain__pillar {
+  position: absolute;
+  /*
+    Anchored to the BOTTOM, not the top.
+
+    The source is 450x1400 (0.32 w/h) and the rail is far narrower than that
+    — ~0.18 at a desktop viewport — so `cover` always has height to spare and
+    must crop one end. Which end is not a free choice: the asset's last ~30px
+    carry the lotus-petal plinth, the kuthuvilakku and the kalasham, i.e. the
+    only part that reads as the pillar MEETING THE GROUND. Cropping there
+    leaves the column hanging in mid-air.
+
+    The top is repetitive corbel carving that loses nothing by being cut, so
+    the overflow is spent there and the base stays planted on the stage floor
+    at every viewport.
+  */
+  bottom: 0;
+  /*
+    `fill`, deliberately, after both alternatives were measured and rejected.
+
+    The source is 450x1400 (0.32 w/h); the rail is ~0.19 at a desktop
+    viewport. No CROP of a 0.32 image shows both of its ends inside a 0.19
+    box, so:
+
+      * `cover` scales to the width and overflows the height by ~70%. Anchored
+        to the top the lotus plinth and lamp are cut off entirely and the
+        column hangs in mid-air; anchored to the bottom the capital is pushed
+        off instead.
+      * `contain` scales to the height and fits the whole pillar, but then it
+        is only 672px of a 900px rail — the pillars start a third of the way
+        down the page with an empty gap above them.
+
+    `fill` stretches the image to the rail on both axes, so the pillar spans
+    the full height AND keeps its base. The distortion this introduces is the
+    cheapest of the three costs: the shaft is a vertically repeating band of
+    corbels and lotus courses, so lengthening it reads as a taller pillar
+    rather than a warped one, and the plinth and lamp at the foot are the only
+    features with a recognisable fixed proportion — they sit in the last ~2%
+    of the image and stretch by correspondingly little.
+  */
+  /* A little wider than the rail it used to fill, so the base reads as a
+     solid plinth standing on the stage floor. */
+  width: clamp(84px, 14vw, 260px);
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/*
+  Single source image: the banana leaves spill to the pillar's LEFT and the
+  lamp stands on its right — the natural fit for the right rail (leaves
+  toward the stage). The left rail is that same image mirrored, so both
+  pillars lean their leaves inward symmetrically.
+*/
+/* Pushed out past the screen edge so each pillar sits tucked into its
+   corner, leaving more of the stage to the banner and packs. */
+.curtain__pillar--r {
+  right: 0;
+  transform: translateX(16%);
+}
+
+.curtain__pillar--l {
+  left: 0;
+  transform: translateX(-16%) scaleX(-1);
+}
+
+@media (max-width: 700px) {
+  .curtain__pillar { width: clamp(40px, 16vw, 100px); }
+}
+
+/* Phones: no rails at all. On a narrow screen they took a third of the
+   width from the banner and the packs; desktop keeps them. */
+@media (max-width: 700px) {
+  .curtain__pillar { display: none; }
+}
+
+/* ---- Kolam motif ----
+   A pulli kolam is a grid of dots with lines threaded between them, so that
+   is how this is built: one radial-gradient layer for the dot grid, and two
+   repeating-linear-gradients crossing at 45deg for the lattice threading
+   through them.
+
+   Tuned deliberately faint. The stage already carries carved pillars, a leaf
+   banner and three packs; at any real contrast this competes with all of
+   them, and the point is a surface that rewards a second look rather than
+   demanding the first. The tones are a deeper gold of the ground itself, not
+   a new hue.
+
+   Masked away from the centre: the bags and the banner need clean ground
+   behind them, so the pattern lives at the edges and fades out of the middle. */
+
+.curtain__kolam {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    /* the dots */
+    radial-gradient(
+      circle at center,
+      rgba(176, 125, 29, 0.5) 0 1.6px,
+      transparent 1.9px
+    ),
+    /* lattice, one diagonal then the other */
+    repeating-linear-gradient(
+      45deg,
+      transparent 0 26px,
+      rgba(176, 125, 29, 0.14) 26px 27px,
+      transparent 27px 54px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent 0 26px,
+      rgba(176, 125, 29, 0.14) 26px 27px,
+      transparent 27px 54px
+    );
+  /* The dot grid's cell is half the lattice's period, so a dot lands at each
+     lattice crossing rather than drifting against it. */
+  background-size: 38px 38px, 76px 76px, 76px 76px;
+  background-position: 0 0, 0 0, 0 0;
+  /* Clear of the middle, where the banner and the packs sit. */
+  -webkit-mask-image: radial-gradient(
+    ellipse 62% 58% at 50% 54%,
+    transparent 38%,
+    #000 88%
+  );
+  mask-image: radial-gradient(
+    ellipse 62% 58% at 50% 54%,
+    transparent 38%,
+    #000 88%
+  );
+  opacity: 0.85;
+}
+
+@media (max-width: 700px) {
+  /* Smaller cell so the motif still reads as a pattern rather than as a few
+     stray marks once the frame is narrow. */
+  .curtain__kolam {
+    background-size: 26px 26px, 52px 52px, 52px 52px;
+    opacity: 0.6;
+  }
+}
+
+/* The stage: the ground, pillars, headline, packs and floor. */
+.curtain__body {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: var(--stage);
+}
+
+/* ---- Opening title, set straight on the stage ----
+   The headline in heavy Fraunces, in deep paddy green so it reads cleanly
+   on the yellow. */
+
+.curtain__opening {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Wide enough for the two halves of the line, one each. */
+  width: min(92%, 900px);
+  margin-bottom: clamp(18px, 4vh, 40px);
+  text-align: center;
+}
+
+.curtain__lede {
+  margin: 0;
+  /* The display serif at its heaviest and largest optical size — the same
+     setting as the brand line over the temple ("The grain of the Chola
+     land."), so the two headlines read as one voice. */
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-variation-settings: "opsz" 144;
+  font-size: clamp(2.1rem, 4.6vw, 4rem);
+  line-height: 0.98;
+  /* Open enough that the heavy letters and words read clearly apart. */
+  letter-spacing: 0.01em;
+  word-spacing: 0.08em;
+  color: var(--brand-900);
+  text-shadow: 0 2px 0 rgba(255, 246, 214, 0.5);
+  /* Even line lengths when it wraps. */
+  text-wrap: balance;
+}
+
+/* ---- Typewriter ----
+   Each letter is its own span. The caret is drawn on the last letter typed,
+   absolutely, so it never pushes the line about as it moves along. */
+.curtain__ch {
+  position: relative;
+}
+
+.curtain__ch.is-caret::after {
+  content: "";
+  position: absolute;
+  right: -0.12em;
+  top: 0.08em;
+  bottom: 0.02em;
+  width: 0.06em;
+  border-radius: 1px;
+  background: var(--gold-600);
+  animation: curtain-caret 0.9s steps(1) infinite;
+}
+
+@keyframes curtain-caret {
+  50% { opacity: 0; }
+}
+
+/* ---- Content ---- */
+
+.curtain__inner {
+  position: relative;
+  /*
+    Above the rails (3). Their inner third is plain stage yellow, opaque in
+    the JPEG, and where a narrow screen runs the packs into that strip it
+    would otherwise clip their edges. The gutters below keep the content
+    clear of the carving itself.
+  */
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding-inline: var(--gutter);
+  /* Clears the transparent header floating over the top of the stage. */
+  padding-top: var(--header-h, 74px);
+  text-align: center;
+}
+
+/* ---- The pack stage ----
+   Wraps the glow, the packs and the floor so the halo can be centred on the
+   group rather than on the whole hero. */
+
+.curtain__stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(100%, 940px);
+}
+
+
+/* ---- The packs ----
+   A centred group: the tallest bag in the middle and in front, the two
+   smaller packs either side of it, a step shorter, tucked behind and angled
+   out from their base — a symmetrical centrepiece.
+
+   Baseline is `flex-end` so all three stand on the same floor. */
+
+.curtain__packs {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  /* The overlap is done with negative margins on the packs themselves —
+     `gap` clamps negative values to zero, so it cannot pull them together. */
+}
+
+/*
+  The entrance offset, animated by GSAP. Registered so it interpolates as a
+  length rather than flipping between strings, and defaulted to 0 so the
+  staging below resolves even before the timeline sets it.
+*/
+@property --rise {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+.curtain__pack {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 34%;
+  object-fit: contain;
+  will-change: transform, opacity;
+  transform-origin: 50% 100%;
+  /* Upright throughout — the step, not rotation, carries the arrangement.
+     --rise is the entrance offset the timeline animates. */
+  transform: translateY(var(--rise, 0px));
+  /* Each bag overlaps the one before it. */
+  margin-inline: clamp(-34px, -2.2vw, -10px);
+}
+
+/*
+  Shadows are stacked in three parts per bag, because one soft blur alone
+  reads as a glow rather than a shadow:
+
+    1. a tight, dark contact shadow that grounds the bag where it meets the
+       floor — this is what stops it floating;
+    2. a mid shadow giving the form its weight;
+    3. a wide, faint ambient one so the bag sits in the scene.
+
+  drop-shadow (not box-shadow) throughout: the packs are cut-outs on
+  transparency, so the shadow has to follow the bag's silhouette rather than
+  its rectangular box.
+
+  Each bag's set is lighter and tighter than the one in front of it — the run
+  recedes, so its shadows should too.
+*/
+
+/* The centre bag: tallest, in front, with the strongest contact shadow. */
+.curtain__pack--hero {
+  z-index: 3;
+  max-height: min(42vh, 400px);
+  filter: drop-shadow(0 3px 3px rgba(44, 30, 10, 0.55))
+    drop-shadow(0 14px 18px rgba(50, 36, 14, 0.34))
+    drop-shadow(0 30px 44px rgba(50, 36, 14, 0.2));
+}
+
+/* The flanking pair: a step shorter, set behind it and angled outward from
+   their base, so the three read as one arranged group. */
+.curtain__pack--side-l,
+.curtain__pack--side-r {
+  z-index: 2;
+  max-height: min(33vh, 318px);
+  filter: drop-shadow(0 3px 3px rgba(44, 30, 10, 0.44))
+    drop-shadow(0 12px 16px rgba(50, 36, 14, 0.26))
+    drop-shadow(0 24px 36px rgba(50, 36, 14, 0.15));
+}
+
+.curtain__pack--side-l { rotate: -5deg; }
+.curtain__pack--side-r { rotate: 5deg; }
+
+/*
+  The shared ground pool, under all three bags. The per-bag contact shadows
+  ground each one individually; this ties them to the same floor so they read
+  as standing together rather than as three cut-outs each with its own
+  shadow.
+
+  Wider and flatter than a bag's own shadow, and strongest in the middle
+  where the tallest bag stands.
+*/
+.curtain__floor {
+  position: relative;
+  z-index: 0;
+  width: min(74%, 700px);
+  height: clamp(22px, 4.2vh, 42px);
+  margin-top: clamp(-30px, -3.4vh, -18px);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse 52% 50% at 50% 50%,
+    rgba(74, 50, 14, 0.42),
+    rgba(80, 55, 16, 0.2) 46%,
+    rgba(88, 60, 18, 0.07) 70%,
+    transparent 85%
+  );
+  filter: blur(13px);
+}
+
+/* ---- Responsive ----
+   The frame narrows on small screens so the packs keep the stage. */
+
+@media (max-width: 900px) {
+  /* Clear of the carving, which fills the outer two thirds of the 12vw
+     rail; the plain inner third may sit under the content. */
+  .curtain { --gutter: 8.2vw; }
+
+  /*
+    Sized by width here too, each a share of the row that steps down left to
+    right, and capped by the screen height for short landscape tablets.
+    Height caps alone let the width cap bind on the first bag only, so the
+    middle one came out taller than it (measured at 600px).
+  */
+  .curtain__pack { max-width: none; max-height: none; }
+  .curtain__pack--hero { width: min(36%, 24vh); }
+  .curtain__pack--side-l,
+  .curtain__pack--side-r { width: min(27%, 17vh); }
+}
+
+/* No rails below 700px, so a plain page margin. */
+@media (max-width: 700px) {
+  .curtain { --gutter: 20px; }
+}
+
+@media (max-width: 560px) {
+  .curtain { --gutter: 18px; }
+  .curtain__inner { padding-inline: var(--gutter); }
+  /* The headline takes the full width of the stage here, with air between
+     it and the packs. */
+  .curtain__opening {
+    width: 100%;
+    margin-bottom: clamp(24px, 6vh, 56px);
+  }
+
+  /*
+    On a phone the width, not the height, is what runs out, so the bags are
+    sized by width: each a set share of the row, stepping down left to right
+    (40 / 35.5 / 32%, tallest first). A height cap would let the narrower
+    bags come out TALLER than the first and break the step. Measured at 360px
+    wide the run, with its overlaps, still clears the stage.
+  */
+  .curtain__pack {
+    margin-inline: -7px;
+    max-width: none;
+    max-height: none;
+  }
+  .curtain__pack--hero { width: 42%; }
+  .curtain__pack--side-l,
+  .curtain__pack--side-r { width: 32%; }
+
+  /*
+    Two shadow layers instead of three. At this size the widest ambient one
+    is not perceptible, and three stacked drop-shadow filters per bag is the
+    most expensive thing on the phone's first paint.
+  */
+  .curtain__pack--hero {
+    filter: drop-shadow(0 2px 2px rgba(44, 30, 10, 0.5))
+      drop-shadow(0 9px 13px rgba(50, 36, 14, 0.26));
+  }
+
+  .curtain__pack--side-l,
+  .curtain__pack--side-r {
+    filter: drop-shadow(0 2px 2px rgba(44, 30, 10, 0.4))
+      drop-shadow(0 8px 11px rgba(50, 36, 14, 0.2));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .curtain__pack { will-change: auto; }
+}

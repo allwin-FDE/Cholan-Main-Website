@@ -1,0 +1,1531 @@
+/* ==========================================================================
+   FROM KINGDOM TO KITCHEN — a ten-chapter scroll film.
+
+   Palette is deliberately narrow: ivory, deep green, antique gold, maroon.
+   Everything else is a tint of those four, so the film reads as one object
+   even as the subject changes from stone to field to kitchen.
+   ========================================================================== */
+
+.story {
+  --ivory: #f7f2e7;
+  --ivory-deep: #efe6d4;
+  --green: #1b3a28;
+  --green-soft: #2d5840;
+  --gold: #c08a2e;
+  --gold-light: #e2b765;
+  --gold-pale: #f3e2bd;
+  --maroon: #6d1f24;
+  --maroon-soft: #8f3b34;
+
+  --ink: #23201a;
+  --ink-soft: #5c564a;
+
+  --f-display: "Fraunces", "Georgia", serif;
+  --f-body: "Inter", system-ui, sans-serif;
+
+  background: var(--ivory);
+  color: var(--ink);
+  font-family: var(--f-body);
+  overflow-x: clip;
+}
+
+/* An animatable radius for the doorway mask. Declared as a typed custom
+   property so GSAP can tween it as a length — a plain --r would be
+   interpolated as a string and would jump between keyframes. */
+@property --r {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0vmax;
+}
+
+/* --------------------------------------------------------------------------
+   Chapter shell
+   -------------------------------------------------------------------------- */
+
+.ch {
+  position: relative;
+  width: 100%;
+}
+
+/* The pinned frame. Exactly one viewport — the page has no global header on
+   this route, so the film owns the full height. */
+.ch__stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+
+/* --------------------------------------------------------------------------
+   Shared typography
+   -------------------------------------------------------------------------- */
+
+.ch__copy {
+  position: relative;
+  z-index: 6;
+  max-width: min(46ch, 42vw);
+  padding-inline: clamp(24px, 6vw, 96px);
+  pointer-events: none;
+}
+
+.ch__copy--left {
+  justify-self: start;
+  text-align: left;
+}
+
+/* 34ch broke these headings one word per line — "From Our Fields to Your
+   Table." is six short words and wants a band, not a column. */
+.ch__copy--centre {
+  justify-self: center;
+  text-align: center;
+  width: min(56ch, 90vw);
+  max-width: none;
+}
+
+/* Wide and shallow, for the same reason as --bottom: the packs rise into the
+   middle of the frame, so the heading has to stay a two-line band across the
+   top rather than a narrow column reaching down into them. */
+.ch__copy--top {
+  position: absolute;
+  top: clamp(34px, 6vh, 74px);
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  width: min(60ch, 90vw);
+  max-width: none;
+}
+
+.ch__copy--top .ch__title {
+  font-size: clamp(1.6rem, 3.3vw, 2.9rem);
+}
+
+.ch__copy--top .ch__sub {
+  margin-top: clamp(10px, 1.4vh, 16px);
+}
+
+/*
+  Bottom copy runs WIDE rather than in a narrow centred column.
+
+  Chapter 07 pushes the camera onto a rice mound at the centre of the frame,
+  so a 40ch column stacked four lines deep printed straight over the subject.
+  Letting the line run to ~62ch keeps it to two lines low in the frame, under
+  the rice rather than across it.
+*/
+.ch__copy--bottom {
+  position: absolute;
+  bottom: clamp(34px, 7vh, 80px);
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  width: min(62ch, 88vw);
+  max-width: none;
+}
+
+.ch__copy--bottom .ch__title {
+  font-size: clamp(1.6rem, 3.3vw, 2.9rem);
+}
+
+.ch__eyebrow {
+  display: block;
+  font-size: clamp(0.68rem, 0.9vw, 0.8rem);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: clamp(14px, 2vh, 22px);
+}
+
+.ch__title {
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 4.4vw, 4rem);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  margin: 0;
+  color: var(--green);
+  text-wrap: balance;
+}
+
+.ch__title--sm {
+  font-size: clamp(1.7rem, 3.2vw, 2.9rem);
+}
+
+.ch__sub {
+  margin: clamp(16px, 2.4vh, 26px) 0 0;
+  font-size: clamp(0.95rem, 1.15vw, 1.1rem);
+  line-height: 1.65;
+  color: var(--ink-soft);
+  max-width: 34ch;
+}
+
+.ch__copy--centre .ch__sub,
+.ch__copy--top .ch__sub,
+.ch__copy--bottom .ch__sub {
+  margin-inline: auto;
+}
+
+/* Dark chapters invert the type. */
+.ch--king .ch__title,
+.ch--feast .ch__title {
+  color: var(--ivory);
+}
+
+.ch--king .ch__sub,
+.ch--feast .ch__sub {
+  color: rgba(247, 242, 231, 0.76);
+}
+
+.ch--king .ch__title,
+.ch--feast .ch__title,
+.ch--king .ch__sub,
+.ch--feast .ch__sub {
+  text-shadow: 0 2px 26px rgba(0, 0, 0, 0.5);
+}
+
+/* A scrim under the bottom copy on the bright feast plate. The shadow alone
+   was not enough once the camera had pushed in and the table filled the
+   lower frame with highlights. */
+.ch--feast .ch__copy--bottom::before {
+  content: "";
+  position: absolute;
+  inset: -40% -12% -60%;
+  z-index: -1;
+  background: radial-gradient(
+    60% 76% at 50% 56%,
+    rgba(26, 14, 6, 0.62) 0%,
+    rgba(26, 14, 6, 0.3) 52%,
+    transparent 82%
+  );
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   01 — TEMPLE ENTRANCE
+   -------------------------------------------------------------------------- */
+
+.ch--temple .ch__stage {
+  background: radial-gradient(
+    120% 90% at 50% 78%,
+    #fffdf7 0%,
+    var(--ivory) 46%,
+    var(--ivory-deep) 100%
+  );
+}
+
+/* The warming layer — fades up as the camera closes on the doorway. */
+.temple__warm {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  background: radial-gradient(
+    80% 70% at 50% 74%,
+    rgba(232, 187, 86, 0.5) 0%,
+    rgba(214, 152, 52, 0.22) 44%,
+    transparent 74%
+  );
+  pointer-events: none;
+}
+
+.temple__plate {
+  position: relative;
+  z-index: 2;
+  width: min(84vh, 86vw);
+  display: grid;
+  place-items: center;
+  will-change: transform;
+}
+
+.temple__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Lifted: the doorway sits at 78.5% of the artwork, so centring the image
+     in the viewport puts the opening low. Raising it places the doorway
+     nearer the optical centre, which is where the zoom converges. */
+  transform: translateY(-9%);
+  filter: drop-shadow(0 26px 60px rgba(90, 62, 20, 0.2));
+}
+
+/* The light inside the archway. Positioned on the measured opening. */
+.temple__glow {
+  position: absolute;
+  left: 49.9%;
+  top: 70%;
+  width: 26%;
+  height: 34%;
+  transform: translate(-50%, -50%);
+  border-radius: 50% 50% 46% 46% / 62% 62% 38% 38%;
+  background: radial-gradient(
+    ellipse at 50% 60%,
+    rgba(255, 252, 240, 0.98) 0%,
+    rgba(250, 226, 165, 0.8) 40%,
+    rgba(232, 187, 86, 0.32) 70%,
+    transparent 100%
+  );
+  filter: blur(14px);
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.temple__copy {
+  position: absolute;
+  top: clamp(64px, 13vh, 150px);
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 5;
+  max-width: 24ch;
+}
+
+/*
+  The doorway mask.
+
+  A full-bleed ivory sheet with a hole punched through it at the archway.
+  Animating --r grows the hole until it has swallowed the frame — so the
+  stage is wiped from the doorway outward, and what is underneath is the
+  next chapter. The mask is transparent at rest (--r: 0) and covers nothing,
+  because the sheet itself only exists inside the hole's complement.
+
+  Implemented with a radial-gradient mask rather than clip-path: a circle()
+  clip cannot be feathered, and a hard edge sweeping across the frame reads
+  as a wipe bar rather than as light coming through an opening.
+*/
+.ch__mask {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  background: var(--ivory);
+  --r: 0vmax;
+  -webkit-mask-image: radial-gradient(
+    circle var(--r) at 49.9% 62%,
+    #000 0%,
+    #000 78%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--r) at 49.9% 62%,
+    #000 0%,
+    #000 78%,
+    transparent 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* --------------------------------------------------------------------------
+   02 — THE KING
+   -------------------------------------------------------------------------- */
+
+.ch--king .ch__stage {
+  background: linear-gradient(180deg, #120d0a 0%, #241410 55%, #3a1c15 100%);
+}
+
+.king__haze {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.4;
+  background: radial-gradient(
+    70% 60% at 62% 58%,
+    rgba(224, 168, 74, 0.34) 0%,
+    rgba(140, 60, 30, 0.16) 46%,
+    transparent 76%
+  );
+  pointer-events: none;
+}
+
+.king__fig {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  z-index: 3;
+  will-change: transform, opacity;
+}
+
+/*
+  `contain`, not `cover`.
+
+  The plate is a transparent cut-out: its black surround was matted out at
+  build time by luminance, because the source vignettes to pure black with a
+  red rim-light that showed as a hard rectangle and colour fringing against
+  the stage. Now that it has real alpha, cropping it with `cover` would cut
+  the figure off instead of cutting away background that no longer exists.
+*/
+.king__fig > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* He stands right of centre in the plate, which is what leaves the left
+     clear for the copy. */
+  object-position: 62% 72%;
+}
+
+/*
+  The cape layer: the same plate, clipped to the cape region and drifting a
+  degree or two against the body.
+
+  The clip is a polygon around the cape as it sits in the source image
+  (roughly x 4%..46%, y 20%..78%). It is generous rather than tight — a tight
+  clip would show its own edge the moment the layer moves, whereas a loose
+  one moves cloth that is already surrounded by cloth.
+*/
+.king__cape {
+  clip-path: polygon(2% 18%, 48% 14%, 46% 82%, 0% 76%);
+  transform-origin: 70% 30%;
+  will-change: transform;
+}
+
+/* --------------------------------------------------------------------------
+   03 — LAND / ORIGIN
+   -------------------------------------------------------------------------- */
+
+.ch--fields .ch__stage {
+  background: #dbe7cf;
+}
+
+.fields__plate {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  will-change: transform;
+}
+
+.fields__plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 62%;
+}
+
+/* Warm haze across the top of the field, as the brief asks. */
+.fields__haze {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(250, 232, 190, 0.85) 0%,
+    rgba(250, 232, 190, 0.34) 22%,
+    transparent 46%
+  );
+}
+
+/* The sunrise glow that tracks horizontally. */
+.fields__sun {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 22%;
+  width: 70vw;
+  height: 46vh;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  background: radial-gradient(
+    closest-side,
+    rgba(255, 238, 190, 0.7) 0%,
+    rgba(248, 208, 122, 0.3) 45%,
+    transparent 100%
+  );
+  filter: blur(22px);
+  will-change: transform, opacity;
+}
+
+.fields__motes {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.fields__mote {
+  position: absolute;
+  width: calc(5px * var(--s));
+  height: calc(9px * var(--s));
+  border-radius: 50%;
+  background: rgba(255, 249, 226, 0.9);
+  box-shadow: 0 0 10px rgba(255, 240, 190, 0.7);
+  will-change: transform, opacity;
+}
+
+.ch--fields .ch__copy {
+  /* Over a photograph, so it gets its own legibility plate rather than
+     relying on the image being light in that corner. */
+  background: linear-gradient(
+    90deg,
+    rgba(247, 242, 231, 0.94) 0%,
+    rgba(247, 242, 231, 0.86) 62%,
+    transparent 100%
+  );
+  padding-block: clamp(28px, 5vh, 54px);
+  border-radius: 0 var(--radius-lg, 22px) var(--radius-lg, 22px) 0;
+  max-width: min(44ch, 46vw);
+}
+
+/* --------------------------------------------------------------------------
+   04 — SEED TO PADDY
+   -------------------------------------------------------------------------- */
+
+.ch--seed .ch__stage {
+  background: linear-gradient(180deg, var(--ivory) 0%, #f2ead8 100%);
+}
+
+.seed__grid {
+  width: min(1280px, 92vw);
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(0, 1.2fr) minmax(120px, 0.6fr);
+  align-items: center;
+  gap: clamp(20px, 4vw, 64px);
+}
+
+/* Beats stacked in one cell so they replace each other in place. */
+.seed__copy {
+  grid-column: 1;
+  display: grid;
+}
+
+.seed__beat {
+  grid-area: 1 / 1;
+  will-change: transform, opacity;
+}
+
+.seed__centre {
+  grid-column: 2;
+  display: grid;
+  place-items: center;
+  height: 100%;
+}
+
+/* THE fixed position. All three states occupy this one cell, so the
+   transformation never walks across the frame. */
+/*
+  The stack is oversized on purpose.
+
+  The husk and sprout were cut from ONE image and keep that image's canvas —
+  measured, the husk's pixels occupy x 0..581 of 883 and the sprout's
+  x 306..883, so each plate is ~40% transparent padding. That padding is what
+  holds the two in register when the sprout grows out of the husk, so it must
+  not be cropped away. The consequence is that fitting the CANVAS to the frame
+  renders the visible seed at ~60% of the space it appears to have. Scaling
+  the stack past the frame and letting the subject land at the right size is
+  the correction; the padding then overhangs harmlessly.
+*/
+.seed__stack {
+  display: grid;
+  place-items: center;
+  width: min(100%, 150%);
+  height: min(94vh, 780px);
+  max-height: 100%;
+}
+
+/*
+  Every state occupies the same cell AND is bounded by it.
+
+  `min-height: 0` is what makes the bound real: a grid item's automatic
+  minimum size is its content, so without it an image taller than the row
+  simply overflows the track rather than being scaled down — measured, the
+  husk rendered 542px tall inside a 520px stack and hung out of the top of
+  the frame. The percentage height then resolves against the row instead of
+  against nothing.
+*/
+.seed__stack > * {
+  grid-area: 1 / 1;
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.seed__stack img {
+  display: block;
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  will-change: transform, opacity;
+}
+
+.seed__husk {
+  transform-origin: 50% 50%;
+}
+
+.seed__sprout {
+  transform-origin: 50% 92%;
+}
+
+/* The ripe stalk: the sprout plate, greened down and hung with drawn ears,
+   so the third beat is a different plant rather than the same picture. */
+.seed__stalk {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform-origin: 50% 92%;
+  will-change: transform, opacity;
+}
+
+.seed__stalk-body {
+  filter: sepia(0.5) saturate(1.5) hue-rotate(6deg) brightness(1.04);
+}
+
+/* Grain heads on the stalk. Drawn as tapered ellipses in the brand gold. */
+.seed__ear {
+  position: absolute;
+  width: clamp(12px, 1.5vw, 19px);
+  height: clamp(30px, 3.6vw, 46px);
+  border-radius: 50% 50% 46% 46% / 60% 60% 40% 40%;
+  background: linear-gradient(160deg, var(--gold-light) 0%, var(--gold) 58%, #a3701f 100%);
+  box-shadow: inset 0 0 6px rgba(255, 240, 200, 0.5);
+  transform-origin: 50% 100%;
+}
+
+.seed__ear--1 {
+  left: 46%;
+  top: 14%;
+  transform: rotate(-16deg);
+}
+
+.seed__ear--2 {
+  left: 56%;
+  top: 9%;
+  transform: rotate(7deg);
+}
+
+.seed__ear--3 {
+  left: 63%;
+  top: 20%;
+  transform: rotate(23deg);
+}
+
+.seed__rail {
+  grid-column: 3;
+  justify-self: end;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 14px;
+  font-size: clamp(0.66rem, 0.85vw, 0.78rem);
+  letter-spacing: 0.22em;
+  color: var(--green-soft);
+}
+
+.seed__mark {
+  text-align: right;
+  transition: opacity 0.25s ease;
+}
+
+/* --------------------------------------------------------------------------
+   05 — PURITY WITHIN
+   -------------------------------------------------------------------------- */
+
+.ch--purity .ch__stage {
+  background: radial-gradient(90% 80% at 62% 50%, #fffdf8 0%, var(--ivory) 58%, #ece1cc 100%);
+  grid-template-columns: 1fr 1fr;
+  place-items: center;
+}
+
+.ch--purity .ch__copy {
+  grid-column: 1;
+}
+
+.purity__centre {
+  grid-column: 2;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: min(70vh, 620px);
+}
+
+.purity__centre > * {
+  grid-area: 1 / 1;
+}
+
+.purity__glow {
+  width: min(48vh, 380px);
+  height: min(48vh, 380px);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 253, 244, 0.95) 0%,
+    rgba(243, 226, 189, 0.6) 40%,
+    transparent 72%
+  );
+  filter: blur(18px);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/*
+  Three separate cut-outs, composited offline from the one source plate
+  rather than clipped at runtime.
+
+  clip-path was the obvious approach and it does not work here: the kernel is
+  not a rectangle and it is partly OCCLUDED by the husk in front of it, so any
+  inset() box either includes husk or cuts the grain. Measured, the visible
+  white runs x 452..595 of 900 while the husk crosses it — a box cannot
+  separate them. The layers are therefore masked per-pixel by luminance in
+  build-time Python (see purity-*.webp) and each is a real transparent PNG
+  that can be moved independently.
+*/
+.purity__half,
+.purity__grain {
+  max-height: min(70vh, 620px);
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  will-change: transform, opacity;
+}
+
+/*
+  Each half hinges about its own outer base, so they swing open rather than
+  sliding apart.
+
+  They are cropped cut-outs of different widths, so they are placed by their
+  inner edge — left half's right edge and right half's left edge both at the
+  centre line — and NOT by centring both in the cell, which would overlap
+  them by half their widths and start the chapter with the husk already
+  apart.
+*/
+.purity__half--l {
+  transform-origin: 92% 94%;
+  justify-self: end;
+  margin-right: 50%;
+}
+
+.purity__half--r {
+  transform-origin: 8% 94%;
+  justify-self: start;
+  margin-left: 50%;
+}
+
+.purity__grain {
+  z-index: 2;
+  transform-origin: 50% 50%;
+  filter: drop-shadow(0 8px 30px rgba(190, 150, 80, 0.35));
+}
+
+.purity__chaff {
+  width: clamp(10px, 1.2vw, 16px);
+  height: clamp(26px, 3vw, 40px);
+  border-radius: 50% 50% 44% 44% / 58% 58% 42% 42%;
+  background: linear-gradient(150deg, var(--gold-light), var(--gold));
+  opacity: 0.85;
+  transform: translate(
+      calc((var(--i) - 2.5) * 34px),
+      calc((var(--i) - 2.5) * 22px)
+    )
+    rotate(calc(var(--i) * 34deg));
+  will-change: transform, opacity;
+}
+
+/* The flood that carries the white grain into chapter 06. */
+.ch__mask--flood {
+  background: var(--ivory);
+  opacity: 0;
+  -webkit-mask-image: none;
+  mask-image: none;
+  z-index: 7;
+}
+
+/* --------------------------------------------------------------------------
+   06 — PADDY TO PACK
+   -------------------------------------------------------------------------- */
+
+.ch--pack .ch__stage {
+  background: linear-gradient(180deg, #fffdf7 0%, var(--ivory) 62%, #ebe0c9 100%);
+}
+
+.pack__floor {
+  position: relative;
+  width: min(1100px, 88vw);
+  height: min(58vh, 480px);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: end;
+  justify-items: center;
+  gap: clamp(8px, 2vw, 28px);
+  /* Pushed down to clear the heading band above and the tagline below —
+     measured, the centre pack otherwise rose into the second line of the
+     title. */
+  margin-top: clamp(76px, 15vh, 150px);
+}
+
+/* The falling stream, positioned over the left bag's mouth. */
+.pack__stream {
+  position: absolute;
+  left: 16.6%;
+  top: 0;
+  width: 22%;
+  height: 100%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  display: grid;
+  place-items: start center;
+  z-index: 4;
+}
+
+.pack__grain {
+  grid-area: 1 / 1;
+  width: calc(9px * var(--s));
+  height: calc(15px * var(--s));
+  border-radius: 50% 50% 44% 44% / 58% 58% 42% 42%;
+  background: linear-gradient(150deg, #fffaf0 0%, var(--gold-pale) 55%, var(--gold-light) 100%);
+  box-shadow: 0 1px 4px rgba(150, 110, 40, 0.28);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.pack__bag {
+  display: block;
+  max-height: min(58vh, 480px);
+  max-width: 100%;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 22px 34px rgba(90, 62, 20, 0.24));
+  will-change: transform, opacity;
+}
+
+/* The centre pack leads, per the brief's composition. */
+.pack__bag--m {
+  max-height: min(64vh, 530px);
+  z-index: 3;
+}
+
+.pack__tag {
+  position: absolute;
+  bottom: clamp(34px, 7vh, 76px);
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: clamp(1.1rem, 1.8vw, 1.55rem);
+  letter-spacing: 0.02em;
+  color: var(--green);
+  opacity: 0;
+  z-index: 6;
+}
+
+/* --------------------------------------------------------------------------
+   07 — ROYAL TABLE
+   -------------------------------------------------------------------------- */
+
+.ch--feast .ch__stage {
+  background: #1a1008;
+}
+
+.feast__plate {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* The rice mound sits at the centre of the plate, so the dolly converges
+     there. */
+  transform-origin: 50% 56%;
+  will-change: transform;
+}
+
+.feast__plate > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 56%;
+}
+
+/*
+  The soft-focus layer: the same frame, blurred, with an ellipse over the
+  rice erased from it. The rice therefore stays sharp while everything
+  around it goes soft — a depth-of-field effect built from one still.
+*/
+.feast__blur {
+  /* 4px, not 7: at 7 the surrounding food stopped reading as food and the
+     frame looked out of focus rather than shallow. */
+  filter: blur(4px) saturate(1.05);
+  opacity: 0;
+  -webkit-mask-image: radial-gradient(
+    ellipse 13% 15% at 50% 56%,
+    transparent 0%,
+    transparent 56%,
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 13% 15% at 50% 56%,
+    transparent 0%,
+    transparent 56%,
+    #000 100%
+  );
+  will-change: opacity;
+}
+
+.feast__warm {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    70% 60% at 50% 52%,
+    rgba(255, 206, 122, 0.4) 0%,
+    rgba(180, 106, 30, 0.14) 50%,
+    transparent 78%
+  );
+  mix-blend-mode: screen;
+}
+
+/* Steam over the rice mound. */
+.feast__steam {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 12%;
+  height: 20%;
+  transform: translateX(-50%);
+  z-index: 4;
+  pointer-events: none;
+}
+
+.feast__steam span,
+.family__steam span {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: clamp(18px, 2.2vw, 30px);
+  height: clamp(18px, 2.2vw, 30px);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, transparent 70%);
+  filter: blur(6px);
+  opacity: 0;
+  animation: steam 6.5s ease-in-out infinite;
+}
+
+.feast__steam span:nth-child(2),
+.family__steam span:nth-child(2) {
+  animation-delay: 2.1s;
+  margin-left: -14px;
+}
+
+.feast__steam span:nth-child(3),
+.family__steam span:nth-child(3) {
+  animation-delay: 4.3s;
+  margin-left: 12px;
+}
+
+@keyframes steam {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.7);
+  }
+  22% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -120px) scale(1.7);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   08 — FAMILY
+   -------------------------------------------------------------------------- */
+
+/*
+  `minmax(0, 1fr) auto` rather than `1fr auto`: a 1fr track has an automatic
+  minimum of its content, so the leaf's intrinsic height pushed the row past
+  the viewport and the copy under it was cut off at the fold. minmax(0,…)
+  lets the artwork row actually shrink to the space left over.
+*/
+.ch--family .ch__stage {
+  background: linear-gradient(180deg, #fffefa 0%, var(--ivory) 100%);
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-content: center;
+  gap: clamp(16px, 3vh, 40px);
+  padding-block: clamp(36px, 7vh, 84px);
+}
+
+.family__centre {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(760px, 84vw);
+  height: 100%;
+  min-height: 0;
+  align-self: center;
+}
+
+.ch--family .family__leaf {
+  max-height: 100%;
+  width: auto;
+  max-width: 100%;
+}
+
+.family__leaf {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 20px 40px rgba(60, 80, 40, 0.18));
+  will-change: transform, opacity;
+}
+
+.family__rice {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  transform: translate(-50%, -50%);
+  width: 30%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  will-change: transform, opacity;
+}
+
+/* The rice mound: a soft white dome on the leaf. */
+.family__mound {
+  width: 100%;
+  height: 62%;
+  align-self: end;
+  border-radius: 50% 50% 42% 42% / 74% 74% 26% 26%;
+  background: radial-gradient(
+    ellipse at 42% 28%,
+    #ffffff 0%,
+    #fdfaf2 42%,
+    #efe7d6 78%,
+    #ddd2bd 100%
+  );
+  box-shadow: 0 10px 24px rgba(70, 60, 35, 0.18), inset 0 -6px 14px rgba(190, 175, 145, 0.35);
+}
+
+.family__steam {
+  position: absolute;
+  left: 50%;
+  bottom: 52%;
+  width: 60%;
+  height: 80%;
+  transform: translateX(-50%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ch--family .ch__copy {
+  align-self: start;
+}
+
+/* --------------------------------------------------------------------------
+   09 — PRODUCT HERO
+   -------------------------------------------------------------------------- */
+
+/* Same fix as chapter 08: the packs row must be allowed to shrink, or the
+   heading above it and the buttons below it are pushed off the frame. */
+.ch--product .ch__stage {
+  background: radial-gradient(100% 80% at 50% 40%, #fffdf7 0%, var(--ivory) 55%, #e9dec7 100%);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  align-content: center;
+  padding-block: clamp(32px, 6vh, 72px);
+  gap: clamp(14px, 2.6vh, 34px);
+}
+
+/* Faint paddy silhouettes: repeating stalks, kept very low contrast so they
+   never compete with the packs. */
+.product__silhouettes {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+      86deg,
+      transparent 0 44px,
+      rgba(27, 58, 40, 0.5) 44px 45.5px,
+      transparent 45.5px 90px
+    ),
+    repeating-linear-gradient(
+      94deg,
+      transparent 0 62px,
+      rgba(27, 58, 40, 0.34) 62px 63.5px,
+      transparent 63.5px 126px
+    );
+  -webkit-mask-image: linear-gradient(180deg, transparent 38%, #000 100%);
+  mask-image: linear-gradient(180deg, transparent 38%, #000 100%);
+}
+
+.product__copy {
+  grid-row: 1;
+  z-index: 4;
+}
+
+.product__row {
+  grid-row: 2;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: end;
+  justify-items: center;
+  gap: clamp(6px, 2vw, 34px);
+  width: min(1060px, 90vw);
+  align-self: center;
+  height: 100%;
+  min-height: 0;
+}
+
+/* `width: 100%` is required, not incidental: the slot's only in-flow child
+   is the absolutely-positioned pack, so without it the slot has no intrinsic
+   width to give and the grid track collapsed the artwork to 0–29px. */
+.product__slot {
+  position: relative;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+}
+
+/*
+  Absolutely positioned inside the slot, sized by `object-fit: contain`.
+
+  A percentage height on an in-flow image does not reliably bound it here:
+  the slot is a grid box with `align-items: end`, so the image is not
+  stretched and its `height: 100%` resolved against a larger containing block
+  — measured, a 417px slot rendered a 495px pack that overhung the buttons
+  below even with `overflow: hidden` on the slot. Taking the image out of
+  flow makes the slot's padding box the definitive frame, and `contain` then
+  scales the artwork to fit inside it without cropping.
+*/
+.product__bag {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 100%;
+  filter: drop-shadow(0 18px 26px rgba(90, 62, 20, 0.18));
+  will-change: transform;
+}
+
+/*
+  Centre pack larger, the outer two angled inward.
+
+  Expressed as width and margin rather than as `transform`, deliberately:
+  chapter 09 animates each bag's `y` for the float and its entrance, and GSAP
+  writes the whole transform property — a scale or rotate declared here would
+  be wiped on the first tick. The two rotations DO live on transform, so they
+  are applied to the slot, which GSAP never touches, not to the bag.
+*/
+.product__slot--m {
+  z-index: 2;
+}
+
+/*
+  Height, not width.
+
+  `width: 108%` overrode the `max-height: 100%` bound — width is the definite
+  axis for an aspect-ratio image, so the height followed from it and the pack
+  rendered 534px tall inside a 417px row, overhanging the buttons below it.
+  Scaling the HEIGHT keeps the row's bound authoritative.
+*/
+/* The centre pack leads by 8%: its frame reaches higher, and `contain`
+   scales the artwork to it. The bottom edge is shared, so the packs still
+   stand on one line. */
+.product__slot--m {
+  top: -8%;
+}
+
+
+/*
+  The inward tilt lives on a wrapper INSIDE the slot, not on the slot itself.
+
+  On the slot it rotated the layout box, which grew its measured height (440px
+  against the centre's 417) and inverted the size relationship the brief asks
+  for. On the image it would be overwritten, because chapter 09 animates each
+  pack's `y`. A dedicated element between the two is the only place that is
+  both outside GSAP's reach and outside the slot's measured box.
+*/
+.product__slot--l .product__bag {
+  rotate: -4deg;
+  transform-origin: 50% 100%;
+}
+
+.product__slot--r .product__bag {
+  rotate: 4deg;
+  transform-origin: 50% 100%;
+}
+
+.product__shadow {
+  position: absolute;
+  bottom: -2%;
+  left: 50%;
+  width: 78%;
+  height: 16px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(70, 50, 18, 0.34) 0%, transparent 72%);
+  filter: blur(7px);
+  z-index: -1;
+  will-change: transform, opacity;
+}
+
+/*
+  The buttons sit in their own row and OVER the artwork row's overhang.
+
+  The packs are bottom-aligned in a flexible row, so their feet reach the row
+  boundary; the CTA immediately below then overlapped them. Raising the CTA's
+  stacking context is not enough — it has to be clear of them, so the packs
+  row gives up the CTA's height plus a gap via padding-bottom on the slot.
+*/
+.product__cta {
+  grid-row: 3;
+  z-index: 5;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+}
+
+
+.story__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 30px;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.story__btn--solid {
+  background: var(--green);
+  color: var(--ivory);
+  box-shadow: 0 8px 22px rgba(27, 58, 40, 0.26);
+}
+
+.story__btn--solid:hover {
+  background: var(--green-soft);
+  transform: translateY(-2px);
+}
+
+.story__btn--ghost {
+  border: 1px solid rgba(27, 58, 40, 0.3);
+  color: var(--green);
+}
+
+.story__btn--ghost:hover {
+  background: rgba(27, 58, 40, 0.06);
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   10 — SIGNATURE
+   -------------------------------------------------------------------------- */
+
+.ch--footer {
+  position: relative;
+  background: var(--green);
+  color: var(--ivory);
+  padding: clamp(80px, 15vh, 160px) clamp(24px, 6vw, 80px) clamp(40px, 7vh, 72px);
+  overflow: hidden;
+}
+
+.sig__nandi {
+  position: absolute;
+  right: 4%;
+  bottom: -6%;
+  width: min(380px, 34vw);
+  height: auto;
+  opacity: 0;
+  pointer-events: none;
+  filter: grayscale(0.3) brightness(1.3);
+}
+
+.sig__inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin-inline: auto;
+}
+
+/* The gold rule that draws left to right. */
+.sig__rule {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 50%, transparent 100%);
+  transform-origin: 0 50%;
+  margin-bottom: clamp(34px, 6vh, 64px);
+}
+
+.sig__line {
+  font-family: var(--f-display);
+  font-size: clamp(1.9rem, 4vw, 3.4rem);
+  line-height: 1.1;
+  margin: 0 0 clamp(48px, 9vh, 96px);
+  color: var(--ivory);
+}
+
+.sig__cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: clamp(28px, 5vw, 64px);
+  margin-bottom: clamp(48px, 8vh, 88px);
+}
+
+.sig__col h3 {
+  margin: 0 0 16px;
+  font-family: var(--f-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+
+.sig__col ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 11px;
+}
+
+.sig__col a {
+  color: rgba(247, 242, 231, 0.8);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.18s ease;
+}
+
+.sig__col a:hover {
+  color: var(--ivory);
+}
+
+.sig__logo {
+  display: block;
+  width: clamp(120px, 14vw, 170px);
+  height: auto;
+  opacity: 0;
+  filter: brightness(0) invert(1) opacity(0.9);
+}
+
+/* ==========================================================================
+   Responsive. Desktop-first, as the brief asks, so these are overrides of a
+   layout that already works wide.
+   ========================================================================== */
+
+@media (max-width: 1000px) {
+  .ch__copy {
+    max-width: min(42ch, 78vw);
+  }
+
+  /* Three columns have nowhere to go on a tablet: the artwork takes the
+     frame and the copy sits over it. */
+  .seed__grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    gap: clamp(14px, 3vh, 30px);
+    text-align: center;
+    padding-block: clamp(50px, 9vh, 90px);
+  }
+
+  .seed__copy {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .seed__centre {
+    grid-column: 1;
+    grid-row: 2;
+    min-height: 0;
+  }
+
+  .seed__stack,
+  .seed__stack img {
+    height: min(44vh, 380px);
+    max-height: min(44vh, 380px);
+  }
+
+  .seed__rail {
+    grid-column: 1;
+    grid-row: 3;
+    justify-self: center;
+    grid-auto-flow: column;
+    gap: 18px;
+  }
+
+  .seed__beat .ch__sub {
+    margin-inline: auto;
+  }
+
+  .ch--purity .ch__stage {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    align-content: center;
+    gap: clamp(16px, 3vh, 36px);
+    padding-block: clamp(50px, 9vh, 90px);
+  }
+
+  .ch--purity .ch__copy {
+    grid-column: 1;
+    grid-row: 1;
+    text-align: center;
+    max-width: 40ch;
+    justify-self: center;
+  }
+
+  .ch--purity .ch__sub {
+    margin-inline: auto;
+  }
+
+  .purity__centre {
+    grid-column: 1;
+    grid-row: 2;
+    height: min(50vh, 440px);
+  }
+
+  .purity__half,
+  .purity__grain {
+    max-height: min(50vh, 440px);
+  }
+}
+
+@media (max-width: 720px) {
+  .ch__title {
+    font-size: clamp(1.75rem, 7.4vw, 2.5rem);
+  }
+
+  .temple__plate {
+    width: 96vw;
+  }
+
+  .ch--king .ch__copy,
+  .ch--fields .ch__copy {
+    justify-self: center;
+    text-align: center;
+    max-width: 86vw;
+  }
+
+  .ch--fields .ch__copy {
+    background: rgba(247, 242, 231, 0.9);
+    border-radius: var(--radius-lg, 22px);
+  }
+
+  .ch--fields .ch__sub,
+  .ch--king .ch__sub {
+    margin-inline: auto;
+  }
+
+  /* He is off-centre in the plate; on a narrow frame crop toward him. */
+  .king__fig > img {
+    object-position: 68% 50%;
+  }
+
+  .pack__floor {
+    height: min(42vh, 340px);
+  }
+
+  .pack__bag,
+  .pack__bag--m {
+    max-height: min(42vh, 340px);
+  }
+
+  /* The bags stay bounded by their row (see the desktop rule); only the
+     row itself needs to give up height on a phone. */
+  .product__row {
+    gap: 4px;
+  }
+
+  /*
+    The two buttons go full-width and stack on a phone, so the CTA band is
+    twice as tall as it is on desktop and ate into the packs row. The row is
+    capped here so the artwork gives up the height instead of overlapping.
+  */
+  .ch--product .product__row {
+    max-height: 46vh;
+  }
+
+  .product__cta {
+    padding-top: clamp(8px, 2vh, 18px);
+  }
+
+  .product__cta {
+    width: 100%;
+  }
+
+  .story__btn {
+    flex: 1 1 200px;
+  }
+
+  .sig__nandi {
+    width: 52vw;
+    right: -6%;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion: no pins, no scrubs. Every chapter becomes a readable
+   still, stacked down the page.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .feast__steam span,
+  .family__steam span {
+    animation: none;
+    opacity: 0.35;
+  }
+}
+
+.story--static .ch__stage {
+  height: auto;
+  min-height: 70vh;
+  padding-block: clamp(56px, 10vh, 110px);
+}
+
+.story--static .ch__mask,
+.story--static .fields__motes,
+.story--static .pack__stream {
+  display: none;
+}
+
+.story--static .temple__glow,
+.story--static .purity__glow,
+.story--static .product__silhouettes,
+.story--static .sig__nandi,
+.story--static .family__steam {
+  opacity: 0.5;
+}
+
+.story--static .sig__logo,
+.story--static .pack__tag {
+  opacity: 1;
+}
+
+.story--static .sig__rule {
+  transform: scaleX(1);
+}
+
+/* Static: the three seed beats read as a list rather than a stack. */
+.story--static .seed__copy {
+  display: grid;
+  gap: 28px;
+}
+
+.story--static .seed__beat {
+  grid-area: auto;
+  visibility: visible !important;
+  opacity: 1;
+}
+
+.story--static .seed__sprout,
+.story--static .seed__stalk {
+  display: none;
+}

@@ -1,0 +1,303 @@
+/* ---------- Section head with side action ---------- */
+
+.section-head-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 44px;
+}
+
+/* The .btn baseline sits low next to a heading block; nudge it onto the line. */
+.section-head-row > .btn { flex: none; margin-bottom: 6px; }
+
+.section-head-row .section-head { margin-bottom: 0; }
+
+/* ---------- Category tiles ---------- */
+
+.cattile {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cattile:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+
+.cattile__media {
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--surface-2, #f3efe4);
+}
+
+.cattile__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.cattile:hover .cattile__media img { transform: scale(1.05); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cattile__media img { transition: none; }
+  .cattile:hover .cattile__media img { transform: none; }
+}
+
+.cattile__body { padding: 22px; display: flex; flex-direction: column; flex: 1; }
+
+.cattile__body h3 { margin-bottom: 6px; }
+
+.cattile__body p {
+  font-size: 0.9rem;
+  color: var(--ink-mute);
+  flex: 1;
+}
+
+.cattile__link {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--brand-600);
+}
+
+/* ---------- Process steps ---------- */
+
+.pstep {
+  padding: 30px 24px;
+  border-radius: var(--radius);
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
+}
+
+.pstep__num {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  background: var(--brand-700);
+  color: var(--gold-400);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.pstep h3 { margin-bottom: 8px; font-size: 1.12rem; }
+
+.pstep p { font-size: 0.92rem; color: var(--ink-soft); margin: 0; }
+
+/* ---------- Bulk / B2B ---------- */
+
+.bulk {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 52px;
+  align-items: center;
+}
+
+.bulk__media {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.bulk__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.bulk__media:hover img { transform: scale(1.04); }
+
+/* ---------- Testimonials ---------- */
+
+/* On the page's own warm white; the cards carry the colour. */
+.reviews {
+  position: relative;
+  overflow: hidden;
+}
+
+.reviews .section-head { margin-bottom: 40px; }
+
+/* The ribbon: full-bleed, fading out at both edges. */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  padding-block: 12px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+}
+
+.marquee__track {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  animation: marquee 70s linear infinite;
+}
+
+/* Half the track is two full copies, so -50% lands on an identical frame. */
+@keyframes marquee {
+  to { transform: translateX(calc(-50% - 12px)); }
+}
+
+.marquee:hover .marquee__track,
+.marquee:focus-within .marquee__track { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  /* Still: a strip the visitor scrolls sideways themselves. */
+  .marquee { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+  .marquee__track { animation: none; padding-inline: var(--gutter); }
+}
+
+/* ---- The card ----
+   Plain white, no decoration: a hairline border, a faint shadow, the stars,
+   the words and who said them. */
+
+.quote {
+  position: relative;
+  flex: 0 0 auto;
+  width: clamp(290px, 27vw, 380px);
+  margin: 0;
+  padding: 26px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid #ece9e1;
+  box-shadow: 0 4px 16px -10px rgba(26, 26, 23, 0.18);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.quote__stars {
+  margin-bottom: 14px;
+  color: var(--gold-500);
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+}
+
+.quote blockquote {
+  margin: 0 0 20px;
+  font-size: 0.96rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  flex: 1;
+}
+
+.quote figcaption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #f0ede6;
+  font-size: 0.86rem;
+}
+
+.quote__avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--brand-50);
+  color: var(--brand-700);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.quote__who { display: flex; flex-direction: column; line-height: 1.35; min-width: 0; }
+.quote__who strong { color: var(--ink); font-weight: 600; }
+.quote__who span { color: var(--ink-mute); font-size: 0.8rem; }
+
+/* What they bought, as quiet text on the right. */
+.quote__product {
+  margin-left: auto;
+  flex: none;
+  color: var(--ink-mute);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .quote { width: 82vw; padding: 26px 22px 20px; }
+  .quote blockquote { font-size: 1rem; }
+}
+
+/* ---------- Blog cards ---------- */
+
+.postcard {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.postcard:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+
+.postcard__ph {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.postcard__ph img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.postcard:hover .postcard__ph img { transform: scale(1.06); }
+
+.postcard__ph--contain { background: radial-gradient(circle at 50% 60%, #fffaf0, #f6e6bf); }
+.postcard__ph--contain img { object-fit: contain; padding: 8%; }
+
+.postcard__body { padding: 22px; }
+
+.postcard__meta {
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-600);
+}
+
+.postcard__body h3 { margin: 10px 0 8px; font-size: 1.1rem; }
+
+.postcard__body p { font-size: 0.9rem; color: var(--ink-mute); margin: 0; }
+
+/* ---------- Featured products: the showcase ----------
+   On the shared page background; the cards carry the colour. */
+
+.showcase {
+  position: relative;
+}
+
+.showcase .section-head .eyebrow { color: var(--gold-600); }
+
+.showcase .btn--ghost {
+  background: #fff;
+  border-color: rgba(176, 125, 29, 0.35);
+}
+
+.showcase .btn--ghost:hover { border-color: var(--gold-600); }
+
+/* The cards carry their own look (ProductCard.css). */
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 960px) {
+  .bulk { grid-template-columns: 1fr; gap: 36px; }
+  .section-head-row { align-items: flex-start; }
+}
+

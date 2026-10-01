@@ -1,0 +1,332 @@
+/* ==========================================================================
+   The journey out — a pinned, full-bleed film scrubbed by the scroll, with
+   the copy laid over the parts of each shot the camera leaves quiet.
+   ========================================================================== */
+
+.train {
+  position: relative;
+  /* The film ends on this blue, so the section around it matches. */
+  background: #0f3d63;
+  color: #fff;
+}
+
+/* A viewport less the sticky header, as with the grain story. */
+.train__stage {
+  position: relative;
+  height: calc(100vh - var(--header-h, 74px));
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.train__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* Holds the first frame's palette while the image is still in flight. */
+  background: linear-gradient(180deg, #5a2a4a 0%, #e0602a 45%, #2f5a2a 100%);
+}
+
+/* ---- Contrast layers ----
+   The sunset is bright orange edge to edge; white type needs somewhere dark
+   to sit. The scrim darkens the left and bottom where the copy lives, the
+   vignette gives the frame its cinematic falloff. */
+
+.train__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(20, 10, 18, 0.62) 0%, rgba(20, 10, 18, 0.18) 42%, transparent 60%,
+      rgba(20, 10, 18, 0.18) 78%, rgba(20, 10, 18, 0.5) 100%),
+    linear-gradient(0deg, rgba(12, 16, 10, 0.55) 0%, transparent 38%);
+}
+
+.train__vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(ellipse 120% 90% at 50% 45%, transparent 55%, rgba(0, 0, 0, 0.38) 100%);
+}
+
+/* ---- Beats ---- */
+
+.train__beat,
+.train__finale {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.train__beat {
+  bottom: clamp(56px, 12vh, 120px);
+  max-width: min(520px, 86vw);
+}
+
+.train__beat--left {
+  left: clamp(20px, 6vw, 96px);
+}
+
+.train__beat--right {
+  right: clamp(56px, 8vw, 128px);
+  text-align: right;
+}
+
+.train__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-400, #e8bb56);
+}
+
+.train__n {
+  font-variant-numeric: tabular-nums;
+  padding-right: 12px;
+  border-right: 1px solid rgba(232, 187, 86, 0.5);
+}
+
+.train__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.1rem, 4.6vw, 4.1rem);
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  color: #fff;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Each word rises through its own mask. The bottom padding keeps
+   descenders from clipping; the negative margin gives the space back. */
+.train__word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.train__word > span {
+  display: inline-block;
+  will-change: transform;
+}
+
+.train__rule {
+  display: block;
+  width: 44px;
+  height: 2px;
+  margin: 22px 0 18px;
+  background: var(--gold-400, #e8bb56);
+  border-radius: 2px;
+}
+
+.train__beat--right .train__rule {
+  margin-left: auto;
+}
+
+.train__lede {
+  margin: 0;
+  max-width: 38ch;
+  font-size: clamp(0.95rem, 1.2vw, 1.08rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.train__beat--right .train__lede {
+  margin-left: auto;
+}
+
+/* ---- Finale, on the blue ----
+   Sits in the upper, darker half of the dissolve so white type holds its
+   contrast; the button lands on the paler lower half. */
+
+.train__finale {
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px 6vh;
+  text-align: center;
+}
+
+.train__finale .train__title {
+  /* Balanced so it breaks as two even lines, not a lone "table." */
+  max-width: 16ch;
+  text-wrap: balance;
+  font-size: clamp(2.4rem, 6vw, 5.2rem);
+}
+
+.train__finale .train__lede {
+  margin: 22px auto 30px;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 18px rgba(8, 40, 70, 0.45);
+}
+
+.train__cta {
+  pointer-events: auto;
+  box-shadow: 0 14px 40px rgba(8, 40, 70, 0.35);
+}
+
+/* ---- Chapter rail ---- */
+
+.train__rail {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  right: clamp(12px, 2.2vw, 36px);
+  transform: translateY(-50%);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 16px;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: #fff;
+  pointer-events: none;
+}
+
+.train__mark {
+  position: relative;
+  padding-right: 18px;
+}
+
+.train__mark::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 6px;
+  height: 1px;
+  background: currentColor;
+}
+
+/* ---- Progress line along the foot of the frame ---- */
+
+.train__progress {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.train__progress-fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-500, #d29b2c), var(--gold-400, #e8bb56));
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+
+/* ---- Scroll cue ---- */
+
+.train__cue {
+  position: absolute;
+  z-index: 3;
+  right: clamp(20px, 6vw, 96px);
+  bottom: clamp(24px, 5vh, 52px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+}
+
+.train__cue-line {
+  position: relative;
+  width: 1px;
+  height: 34px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.train__cue-line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -40%;
+  width: 100%;
+  height: 40%;
+  background: #fff;
+  animation: train-cue 1.8s cubic-bezier(0.6, 0, 0.3, 1) infinite;
+}
+
+@keyframes train-cue {
+  to { top: 100%; }
+}
+
+/* ==========================================================================
+   Narrow screens: every beat takes the lower part of the frame, centred,
+   and the rail and cue step aside for the film.
+   ========================================================================== */
+
+@media (max-width: 800px) {
+  .train__beat,
+  .train__beat--left,
+  .train__beat--right {
+    left: 20px;
+    right: 20px;
+    bottom: clamp(40px, 9vh, 80px);
+    max-width: none;
+    text-align: left;
+  }
+
+  .train__beat--right .train__rule { margin-left: 0; }
+  .train__beat--right .train__lede { margin-left: 0; }
+
+  .train__scrim {
+    background: linear-gradient(0deg, rgba(12, 12, 14, 0.78) 0%, rgba(12, 12, 14, 0.3) 45%, transparent 70%);
+  }
+
+  .train__rail,
+  .train__cue { display: none; }
+}
+
+/* ==========================================================================
+   Reduced motion: no pin, no scrub. A single still behind the copy, and
+   every beat in normal flow.
+   ========================================================================== */
+
+.train--static .train__stage {
+  height: auto;
+  display: grid;
+  gap: clamp(40px, 8vh, 80px);
+  padding: clamp(64px, 12vh, 120px) clamp(20px, 6vw, 96px);
+}
+
+.train--static .train__beat,
+.train--static .train__finale {
+  position: relative;
+  inset: auto;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  padding: 0;
+}
+
+.train--static .train__beat--right {
+  justify-self: end;
+}
+
+.train--static .train__scrim {
+  background: rgba(15, 20, 30, 0.55);
+}
+
+.train--static .train__rail,
+.train--static .train__progress,
+.train--static .train__cue { display: none; }

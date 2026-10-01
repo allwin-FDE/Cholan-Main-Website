@@ -1,0 +1,309 @@
+/* ==========================================================================
+   Site-wide motion and interaction (Motion.jsx, Interactions.jsx)
+   ========================================================================== */
+
+/* ---------- Page wipe ---------- */
+
+.fx-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.fx-wipe__panel {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.fx-wipe__panel--gold { background: var(--gold-500); }
+.fx-wipe__panel--green { background: var(--brand-800); }
+
+.fx-wipe__panel--cream {
+  display: grid;
+  place-items: center;
+  background: var(--page-bg);
+}
+
+.fx-wipe__mark {
+  width: min(220px, 50vw);
+  height: auto;
+}
+
+/* ---------- Grain burst ---------- */
+
+.fx-grains {
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.fx-grain {
+  position: absolute;
+  left: -2.5px;
+  top: -5px;
+  width: 5px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(80, 55, 10, 0.25);
+}
+
+/* ---------- Tilt and glint ---------- */
+
+.card,
+.cattile,
+.postcard,
+.quote,
+.infocard,
+.feature {
+  position: relative;
+  --mx: 50%;
+  --my: 50%;
+}
+
+/* The glint: a soft pool of light that follows the pointer. The product card
+   already draws its border in ::after, so it shares that layer. */
+.fx-fine .cattile::after,
+.fx-fine .postcard::after,
+.fx-fine .quote::after,
+.fx-fine .infocard::after,
+.fx-fine .feature::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.fx-fine .card::after,
+.fx-fine .cattile::after,
+.fx-fine .postcard::after,
+.fx-fine .quote::after,
+.fx-fine .infocard::after,
+.fx-fine .feature::after {
+  z-index: 3;
+  background: radial-gradient(
+    circle at var(--mx) var(--my),
+    rgba(255, 255, 255, 0.34),
+    rgba(255, 255, 255, 0) 42%
+  );
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 0.35s ease, border-color 0.35s ease;
+}
+
+.fx-fine .fx-tilt::after { opacity: 1; }
+
+.fx-tilt {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-6px) !important;
+  transition: transform 0.14s ease-out, box-shadow 0.35s ease !important;
+  box-shadow: 0 30px 50px -22px rgba(40, 30, 8, 0.35) !important;
+  z-index: 2;
+}
+
+/* ---------- Cursor ring ---------- */
+
+.fx-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 999;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.fx-cursor.is-on { opacity: 1; }
+
+.fx-cursor::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid rgba(176, 125, 29, 0.75);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background 0.3s ease, border-color 0.3s ease, transform 0.15s ease;
+}
+
+.fx-cursor[data-state="link"]::before {
+  width: 56px;
+  height: 56px;
+  background: rgba(232, 187, 86, 0.16);
+  border-color: rgba(176, 125, 29, 0.5);
+}
+
+.fx-cursor[data-state="text"]::before {
+  width: 6px;
+  height: 6px;
+  background: var(--gold-600);
+}
+
+.fx-cursor.is-down::before { transform: translate(-50%, -50%) scale(0.82); }
+
+/* ---------- Back to top ---------- */
+
+.fx-top {
+  position: fixed;
+  right: clamp(16px, 2.4vw, 32px);
+  bottom: clamp(16px, 2.4vw, 32px);
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 253, 248, 0.92);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 26px -10px rgba(22, 48, 31, 0.45);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px) scale(0.8);
+  transition: opacity 0.35s ease, visibility 0.35s, transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+}
+
+.fx-top--on {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.fx-top:hover { transform: translateY(-3px); }
+.fx-top:focus-visible { outline: 2px solid var(--gold-500); outline-offset: 3px; }
+
+.fx-top svg {
+  width: 48px;
+  height: 48px;
+  overflow: visible;
+}
+
+.fx-top__track,
+.fx-top__ring {
+  fill: none;
+  stroke-width: 2.5;
+}
+
+.fx-top__track { stroke: rgba(22, 48, 31, 0.1); }
+
+.fx-top__ring {
+  stroke: var(--gold-500);
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.fx-top__arrow {
+  fill: none;
+  stroke: var(--brand-800);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.3s ease;
+}
+
+.fx-top:hover .fx-top__arrow { transform: translateY(-3px); }
+
+/* ---------- Small delights on shared pieces ---------- */
+
+/* Buttons: a sheen sweeps across on hover. */
+.btn,
+.atc__add {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.btn::after,
+.atc__add::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+
+.btn:hover::after,
+.atc__add:hover::after {
+  transform: translateX(120%);
+  transition: transform 0.7s ease;
+}
+
+/* Arrows in "Explore →" style links nudge forward. */
+.cattile__link,
+.postcard__read {
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), color 0.2s ease;
+}
+
+.cattile:hover .cattile__link,
+.postcard:hover .postcard__read {
+  transform: translateX(6px);
+  color: var(--gold-600);
+}
+
+/* Filter chips pop when chosen. */
+.filters__chips .chip { transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.4), background 0.2s ease, color 0.2s ease, border-color 0.2s ease; }
+.filters__chips .chip:active { transform: scale(0.92); }
+.filters__chips .chip--on { animation: fx-pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.4); }
+
+@keyframes fx-pop {
+  0% { transform: scale(0.9); }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+/* Nav links: an underline grows from the centre on hover (the current page
+   already carries a full one). */
+@media (min-width: 961px) {
+  .nav__link::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    right: 50%;
+    bottom: -2px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--gold-500);
+    transition: left 0.3s ease, right 0.3s ease;
+  }
+  .nav__link:not(.nav__link--active):hover::before { left: 0; right: 0; }
+}
+
+/* Form fields lift and glow on focus. */
+.input,
+.field input,
+.field textarea,
+.field select {
+  transition: border-color 0.2s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.input:focus,
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 4px rgba(232, 187, 86, 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-cursor,
+  .fx-wipe { display: none; }
+  .chip--on { animation: none; }
+}

@@ -1,0 +1,612 @@
+import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { site, whatsappLink } from "../data/site";
+import "./About.css";
+
+gsap.registerPlugin(ScrollTrigger);
+
+/*
+  About — one light, cream page, built from the approved reference:
+
+    1. The rule      a single quote, centred, between gold rules
+    2. Our story     the packs beside the story, stamped "Trusted since 1998"
+    3. Our promise   four commitments in one card, icon over each
+    4. Our journey   milestones on a spine that fills as you scroll
+    5. Our products  the bags, and the way to the full range
+    6. Visit us      a warm gold panel: call, WhatsApp, address, hours
+
+  Contact details and milestones come from the site's own data rather than
+  the reference mock-up, which carried placeholder numbers and addresses.
+  Motion is reveal-on-arrival only, and none at all under reduced motion.
+*/
+
+const values = [
+  { title: "Traceability", text: "We know where every grain comes from.", icon: "grain" },
+  { title: "Minimal processing", text: "No unnecessary steps, no artificial polishing.", icon: "gear" },
+  { title: "Fair sourcing", text: "We buy direct from farmer families, and pay them first.", icon: "leaf" },
+  { title: "Consistency", text: "The same goodness in every pack.", icon: "badge" },
+];
+
+const timeline = [
+  {
+    year: "1998",
+    title: "A single trading counter",
+    text: "The family began trading paddy in Salem, supplying local provision stores.",
+  },
+  {
+    year: "2006",
+    title: "Our own milling",
+    text: "We moved from trading to milling, taking control of grading and quality.",
+  },
+  {
+    year: "2015",
+    title: "The millet revival",
+    text: "We began sourcing native millets and heritage rice as demand for them returned.",
+  },
+  {
+    year: "2024",
+    title: "Direct to your home",
+    text: "Launched direct household delivery alongside our wholesale business.",
+  },
+];
+
+const packs = [
+  { img: "stage-karikalan", alt: "Karikalan rice, 25 kg bulk pack" },
+  { img: "stage-rajabogam", alt: "Cholan Rajabogam rice bag" },
+  { img: "stage-gramiyam", alt: "Gramiyam Bapatla Ponni rice, 26 kg bag" },
+];
+
+/* ---- Line icons, drawn to one 24px grid and one stroke weight ---- */
+
+const ICONS = {
+  // Two grains on a stem.
+  grain: (
+    <>
+      <path d="M12 21V11" />
+      <path d="M12 11c-3.6-.4-5.4-2.8-5.4-6.4 3.6.3 5.4 2.6 5.4 6.4Z" />
+      <path d="M12 15c3.6-.4 5.4-2.8 5.4-6.4-3.6.3-5.4 2.6-5.4 6.4Z" />
+    </>
+  ),
+  gear: (
+    <>
+      <circle cx="12" cy="12" r="3.2" />
+      <path d="M12 2.8v2.4M12 18.8v2.4M21.2 12h-2.4M5.2 12H2.8M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7M18.5 18.5l-1.7-1.7M7.2 7.2 5.5 5.5" />
+      <circle cx="12" cy="12" r="6.4" />
+    </>
+  ),
+  leaf: (
+    <>
+      <path d="M5 19c0-8.5 5.5-14 15-14 0 9.5-5.5 15-14 15" />
+      <path d="M5 19 13 11" />
+    </>
+  ),
+  // A rosette with a star — the "same every time" seal.
+  badge: (
+    <>
+      <circle cx="12" cy="12" r="8.6" />
+      <path d="m12 7.6 1.35 2.75 3.03.44-2.19 2.13.52 3.02L12 14.52l-2.71 1.42.52-3.02-2.19-2.13 3.03-.44Z" />
+    </>
+  ),
+  phone: (
+    <path d="M6.6 3.5h2.6l1.5 4-1.9 1.3a11 11 0 0 0 6.4 6.4l1.3-1.9 4 1.5v2.6a2 2 0 0 1-2.2 2A17 17 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2Z" />
+  ),
+  chat: (
+    <>
+      <path d="M4.2 19.8 5.3 16A8.3 8.3 0 1 1 8.4 19l-4.2.8Z" />
+      <path d="M9.3 9.2c.3 2.4 2.2 4.3 4.6 4.8l1-1.1 1.6.7-.4 1.5c-3.7-.2-6.7-3.2-6.9-6.9l1.5-.4.7 1.6-1.1.8" />
+    </>
+  ),
+  pin: (
+    <>
+      <path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z" />
+      <circle cx="12" cy="10" r="2.4" />
+    </>
+  ),
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="8.6" />
+      <path d="M12 7.4V12l3 2" />
+    </>
+  ),
+  mail: (
+    <>
+      <rect x="3.4" y="5.6" width="17.2" height="12.8" rx="2" />
+      <path d="m4 7 8 6 8-6" />
+    </>
+  ),
+  arrow: <path d="M5 12h13M13 6.5 18.5 12 13 17.5" />,
+};
+
+function Icon({ name, className = "" }) {
+  return (
+    <svg
+      className={`ab-icon ${className}`}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {ICONS[name]}
+    </svg>
+  );
+}
+
+const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  `${site.address.line1}, ${site.address.line2} ${site.address.pincode}, ${site.address.state}`
+)}`;
+
+/*
+  "Trusted since 1998" as a struck gold medallion.
+
+  Built in layers, the way a real seal is made: a serrated rim, a bevelled
+  ring, a polished face, a ring of raised beads, an engraved inner line, and
+  lettering stamped into the metal. The metal is gradients, not a flat fill —
+  a sweep of highlight across the rim and a lit face — which is what reads as
+  gold rather than yellow. The lettering is embossed with a pale copy one
+  unit below it, the highlight a real stamp catches on its lower edge.
+*/
+const SEAL_TEETH = 36;
+const sealRim = (() => {
+  const pts = [];
+  for (let i = 0; i < SEAL_TEETH * 2; i++) {
+    const r = i % 2 ? 93 : 98.5;
+    const t = (Math.PI * i) / SEAL_TEETH - Math.PI / 2;
+    pts.push(`${(100 + r * Math.cos(t)).toFixed(2)},${(100 + r * Math.sin(t)).toFixed(2)}`);
+  }
+  return `M${pts.join("L")}Z`;
+})();
+const sealBeads = Array.from({ length: 56 }, (_, i) => {
+  const t = (2 * Math.PI * i) / 56;
+  return [100 + 81 * Math.cos(t), 100 + 81 * Math.sin(t)];
+});
+
+function GoldSeal() {
+  return (
+    <svg className="ab-seal" viewBox="0 0 200 200" role="img" aria-label="Trusted since 1998">
+      <defs>
+        {/* Polished rim: dark, bright, dark again, as light rakes across it. */}
+        <linearGradient id="seal-rim" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#8a5a12" />
+          <stop offset="0.2" stopColor="#e8bf5a" />
+          <stop offset="0.36" stopColor="#fff0bf" />
+          <stop offset="0.52" stopColor="#d19a2e" />
+          <stop offset="0.74" stopColor="#7d5210" />
+          <stop offset="1" stopColor="#d9ac48" />
+        </linearGradient>
+        {/* The bevel runs the opposite way, so the ring reads as sunk. */}
+        <linearGradient id="seal-bevel" x1="1" y1="1" x2="0" y2="0">
+          <stop offset="0" stopColor="#fbe3a0" />
+          <stop offset="0.5" stopColor="#b98424" />
+          <stop offset="1" stopColor="#6e470c" />
+        </linearGradient>
+        {/* The face, lit from the upper left. */}
+        <radialGradient id="seal-face" cx="0.38" cy="0.32" r="0.8">
+          <stop offset="0" stopColor="#fff5d2" />
+          <stop offset="0.35" stopColor="#f2cf74" />
+          <stop offset="0.72" stopColor="#d6a13a" />
+          <stop offset="1" stopColor="#a8741c" />
+        </radialGradient>
+        <linearGradient id="seal-gloss" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#fff" stopOpacity="0.55" />
+          <stop offset="1" stopColor="#fff" stopOpacity="0" />
+        </linearGradient>
+        <path id="seal-arc-top" d="M 42 100 A 58 58 0 0 1 158 100" />
+        <path id="seal-arc-bottom" d="M 48 108 A 52 52 0 0 0 152 108" />
+      </defs>
+
+      <path d={sealRim} fill="url(#seal-rim)" stroke="#6e470c" strokeWidth="0.6" />
+      <circle cx="100" cy="100" r="88" fill="url(#seal-bevel)" />
+      <circle cx="100" cy="100" r="85" fill="url(#seal-face)" />
+      {sealBeads.map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r="1.25" className="ab-seal__bead" />
+      ))}
+      <circle cx="100" cy="100" r="75" className="ab-seal__engrave" />
+      <circle cx="100" cy="100" r="74" className="ab-seal__engrave-hi" />
+
+      {/* Arced lettering, embossed: highlight first, then the stamp. */}
+      {["ab-seal__emboss", "ab-seal__stamp"].map((c, i) => (
+        <g key={c} className={c} transform={i ? undefined : "translate(0 0.9)"}>
+          <text className="ab-seal__arc">
+            <textPath href="#seal-arc-top" startOffset="50%">
+              TRUSTED SINCE
+            </textPath>
+          </text>
+          <text className="ab-seal__arc ab-seal__arc--small">
+            <textPath href="#seal-arc-bottom" startOffset="50%">
+              SALEM · TAMIL NADU
+            </textPath>
+          </text>
+          <text x="100" y="116" className="ab-seal__year">
+            1998
+          </text>
+          {/* Three stars beneath the year, the middle one larger. */}
+          <text x="88" y="134" className="ab-seal__star">★</text>
+          <text x="100" y="135" className="ab-seal__star ab-seal__star--lg">★</text>
+          <text x="112" y="134" className="ab-seal__star">★</text>
+        </g>
+      ))}
+
+      {/* A soft gloss across the top half of the face. */}
+      <ellipse cx="92" cy="62" rx="58" ry="34" fill="url(#seal-gloss)" opacity="0.5" />
+    </svg>
+  );
+}
+
+// Each word in its own mask so a headline can rise into place. The space sits
+// between the masks — inside an inline-block it would be trimmed.
+const words = (text) =>
+  text.split(" ").flatMap((w, i) => [
+    i > 0 ? " " : null,
+    <span className="ab-word" key={i}>
+      <span>{w}</span>
+    </span>,
+  ]);
+
+export default function About() {
+  const rootRef = useRef(null);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const ctx = gsap.context(() => {
+      /* ---- Headlines rise word by word as they arrive ---- */
+      gsap.utils.toArray(".ab-rise", root).forEach((h) => {
+        gsap.from(h.querySelectorAll(".ab-word > span"), {
+          yPercent: 110,
+          duration: 1,
+          stagger: 0.05,
+          ease: "power3.out",
+          scrollTrigger: { trigger: h, start: "top 88%", once: true },
+        });
+      });
+
+      /* ---- Everything marked data-reveal fades up ---- */
+      const reveals = gsap.utils.toArray("[data-reveal]", root);
+      gsap.set(reveals, { opacity: 0, y: 30 });
+      ScrollTrigger.batch(reveals, {
+        start: "top 88%",
+        once: true,
+        onEnter: (batch) =>
+          gsap.to(batch, {
+            opacity: 1,
+            y: 0,
+            duration: 0.9,
+            stagger: 0.08,
+            ease: "power3.out",
+            // Hand transform back to the stylesheet, or button hovers die.
+            clearProps: "transform",
+          }),
+      });
+
+      /* ---- The quote's gold rules draw out from the mark ---- */
+      gsap.from(".ab-quote__rule", {
+        scaleX: 0,
+        duration: 1.2,
+        ease: "power3.inOut",
+        scrollTrigger: { trigger: ".ab-quote", start: "top 85%", once: true },
+      });
+
+      /* ---- Journey: the spine fills, each stop lights as it's reached ---- */
+      gsap.fromTo(
+        ".ab-spine__fill",
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          ease: "none",
+          scrollTrigger: { trigger: ".ab-spine", start: "top 62%", end: "bottom 62%", scrub: 0.6 },
+        }
+      );
+      /*
+        Each card waits off to its own side, small and faded, and is drawn in
+        by the scroll as the line reaches its dot: it slides in toward the
+        spine, its year counts up, and its title and text follow. Scrubbed,
+        so scrolling back sends it out again — one card per stretch of
+        scroll, never all at once.
+      */
+      const narrow = window.matchMedia("(max-width: 760px)").matches;
+      gsap.utils.toArray(".ab-stop", root).forEach((stop) => {
+        const card = stop.querySelector(".ab-stop__card");
+        const fromRight = narrow || stop.classList.contains("ab-stop--right");
+        const year = stop.querySelector(".ab-stop__year");
+        const target = parseInt(year.textContent, 10);
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: stop,
+            start: "top 82%",
+            end: "top 50%",
+            scrub: 0.6,
+            onEnter: () => stop.classList.add("is-lit"),
+            onLeaveBack: () => stop.classList.remove("is-lit"),
+          },
+        });
+        tl.fromTo(
+          card,
+          { autoAlpha: 0, x: fromRight ? 80 : -80, scale: 0.92, rotate: fromRight ? 2 : -2 },
+          { autoAlpha: 1, x: 0, scale: 1, rotate: 0, ease: "power3.out", duration: 1 }
+        )
+          .fromTo(
+            card.querySelectorAll("h3, p"),
+            { autoAlpha: 0, y: 14 },
+            { autoAlpha: 1, y: 0, stagger: 0.15, ease: "power2.out", duration: 0.5 },
+            0.35
+          );
+        // The year counts up from a few years before, to its own.
+        if (!Number.isNaN(target)) {
+          const n = { v: target - 12 };
+          tl.to(
+            n,
+            {
+              v: target,
+              duration: 0.8,
+              ease: "power2.out",
+              onUpdate: () => (year.textContent = String(Math.round(n.v))),
+            },
+            0.1
+          );
+        }
+      });
+
+      /* ---- The bags rise into line ---- */
+      gsap.from(".ab-pack", {
+        y: 70,
+        opacity: 0,
+        duration: 1.05,
+        stagger: 0.12,
+        ease: "power3.out",
+        scrollTrigger: { trigger: ".ab-products__packs", start: "top 82%", once: true },
+      });
+
+      // Images decode late and move every trigger below them.
+      const imgs = Array.from(root.querySelectorAll("img"));
+      Promise.all(imgs.map((i) => (i.decode ? i.decode() : Promise.resolve()).catch(() => {}))).then(
+        () => requestAnimationFrame(() => ScrollTrigger.refresh())
+      );
+    }, root);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div className="ab" ref={rootRef}>
+      {/* ---------- 1. THE RULE ---------- */}
+      <section className="ab-quote">
+        <div className="container">
+          <div className="ab-quote__mark" aria-hidden="true">
+            <span className="ab-quote__rule" />
+            <span className="ab-quote__glyph">“</span>
+            <span className="ab-quote__rule" />
+          </div>
+          <h1 className="ab-quote__text ab-rise">
+            {words("We refuse to sell grain")}
+            <br />
+            {words("we would not cook at home.")}
+          </h1>
+          <p className="ab-quote__caption" data-reveal>
+            The same rice we trust in our home, now in yours.
+          </p>
+        </div>
+      </section>
+
+      {/* ---------- 2. OUR STORY ---------- */}
+      <section className="ab-story">
+        <div className="container ab-story__inner">
+          <div className="ab-story__media" data-reveal>
+            <div className="ab-story__frame">
+              <picture>
+                <source media="(max-width: 800px)" srcSet="/images/about-packs-md.webp" />
+                <img
+                  src="/images/about-packs.webp"
+                  alt="Moongil, Karikalan 25 kg and Emperor Basmati rice packs on a stone, among paddy and rice bowls"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+            </div>
+
+            {/* "Trusted since 1998", ringed with laurel. */}
+            <GoldSeal />
+          </div>
+
+          <div className="ab-story__copy">
+            <span className="ab-eyebrow" data-reveal>
+              Our story
+            </span>
+            <h2 className="ab-rise">{words("We started where the paddy does.")}</h2>
+            <p data-reveal>
+              Cholan Rice &amp; Millets was born from a simple belief — that great rice begins at
+              the source. What started as a trading counter in Salem is now our own mill in
+              Coimbatore: we buy direct from farmer families, grade every batch ourselves, and pack
+              fresh against orders, so everyday favourites and heritage grains alike carry the
+              goodness of the field and the trust of generations.
+            </p>
+            <div className="ab-story__actions" data-reveal>
+              <Link to="/products" className="ab-btn ab-btn--dark">
+                Explore Products <Icon name="arrow" />
+              </Link>
+              <Link to="/story" className="ab-btn ab-btn--outline">
+                Our Story
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- 3. OUR PROMISE ---------- */}
+      <section className="ab-promise">
+        <div className="container">
+          <div className="ab-promise__card">
+            {/* "Cholan" in Tamil, faint behind the heading. */}
+            <span className="ab-promise__mark" aria-hidden="true" lang="ta">
+              சோழன்
+            </span>
+
+            <header className="ab-promise__head">
+              <span className="ab-eyebrow" data-reveal>
+                Our promise
+              </span>
+              <h2 className="ab-rise">{words("From generations of knowledge.")}</h2>
+              <p data-reveal>
+                Time-tested practices, modern care, and the same honest approach — so every grain
+                you cook at home is one you can trust.
+              </p>
+            </header>
+
+            <ul className="ab-promise__list">
+              {values.map((v) => (
+                <li className="ab-value" key={v.title} data-reveal>
+                  <span className="ab-value__icon">
+                    <Icon name={v.icon} />
+                  </span>
+                  <h3>{v.title}</h3>
+                  <p>{v.text}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- 4. OUR JOURNEY ---------- */}
+      <section className="ab-journey">
+        <div className="container">
+          <header className="ab-journey__head">
+            <span className="ab-eyebrow" data-reveal>
+              Our journey
+            </span>
+            <h2 className="ab-rise">{words("How we got here.")}</h2>
+          </header>
+
+          <div className="ab-spine">
+            <span className="ab-spine__track" aria-hidden="true">
+              <span className="ab-spine__fill" />
+            </span>
+            <ol className="ab-spine__list">
+              {timeline.map((t, i) => (
+                <li className={`ab-stop ab-stop--${i % 2 ? "right" : "left"}`} key={t.year}>
+                  <span className="ab-stop__dot" aria-hidden="true" />
+                  <div className="ab-stop__card">
+                    <span className="ab-stop__year">{t.year}</span>
+                    <h3>{t.title}</h3>
+                    <p>{t.text}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- 5. OUR PRODUCTS ---------- */}
+      <section className="ab-products">
+        <div className="container ab-products__inner">
+          <div className="ab-products__copy">
+            <span className="ab-eyebrow" data-reveal>
+              Our products
+            </span>
+            <h2 className="ab-rise">{words("Packed fresh, against the order.")}</h2>
+            <p data-reveal>
+              Every bag of Cholan Rice &amp; Millets is packed against the order rather than
+              stored, so you enjoy the same freshness we trust at home — from household packs to
+              26 kg bags for messes and caterers.
+            </p>
+            <Link to="/products" className="ab-btn ab-btn--dark" data-reveal>
+              View All Products <Icon name="arrow" />
+            </Link>
+          </div>
+
+          {/* The wrapper takes the entrance; the image keeps the hover lift,
+              so GSAP's inline transform never overrides it. */}
+          <div className="ab-products__packs">
+            {packs.map((p) => (
+              <div className="ab-pack" key={p.img}>
+                <img
+                  className="ab-pack__img"
+                  src={`/images/${p.img}.webp`}
+                  alt={p.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- 6. VISIT US ---------- */}
+      <section className="ab-visit">
+        <div className="container">
+          <div className="ab-visit__panel">
+            <div className="ab-visit__copy">
+              <span className="ab-eyebrow" data-reveal>
+                Visit us
+              </span>
+              <h2 className="ab-rise">{words("Come see the mill.")}</h2>
+              <p data-reveal>
+                We&rsquo;re happy to show you our process, our standards, and the care that goes
+                into every pack. Call ahead and we will set aside the time.
+              </p>
+              <div className="ab-visit__actions" data-reveal>
+                <a href={`tel:+${site.phoneRaw}`} className="ab-btn ab-btn--dark">
+                  <Icon name="phone" /> {site.phone}
+                </a>
+                <a
+                  href={whatsappLink()}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="ab-btn ab-btn--outline"
+                >
+                  <Icon name="chat" /> WhatsApp <Icon name="arrow" />
+                </a>
+              </div>
+            </div>
+
+            <ul className="ab-visit__cards">
+              <li data-reveal>
+                <Icon name="pin" className="ab-visit__icon" />
+                <div>
+                  <span className="ab-visit__label">Our office</span>
+                  <p>
+                    {site.address.line1}
+                    <br />
+                    {site.address.line2} {site.address.pincode}
+                    <br />
+                    {site.address.state}
+                  </p>
+                  <a href={mapsLink} target="_blank" rel="noreferrer" className="ab-visit__link">
+                    Get directions
+                  </a>
+                </div>
+              </li>
+              <li data-reveal>
+                <Icon name="clock" className="ab-visit__icon" />
+                <div>
+                  <span className="ab-visit__label">Working hours</span>
+                  <p>{site.hours}</p>
+                </div>
+              </li>
+              <li data-reveal>
+                <Icon name="mail" className="ab-visit__icon" />
+                <div>
+                  <span className="ab-visit__label">Email</span>
+                  <p>
+                    <a href={`mailto:${site.email}`} className="ab-visit__link">
+                      {site.email}
+                    </a>
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

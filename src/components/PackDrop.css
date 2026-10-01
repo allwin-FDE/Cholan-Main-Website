@@ -1,0 +1,243 @@
+/* ==========================================================================
+   The pack drop — the hand-off between the hero's leaf wipe and the grain's
+   journey. One pinned frame; the bag descends into it out of a shaft of
+   light while streaks rush upward past.
+   ========================================================================== */
+
+.drop {
+  position: relative;
+  /*
+    The same ground the leaf wipe hands over to. .curtain__pin carries the
+    NEXT section's colour through the last of the wipe, so this must match it
+    exactly or the hand-off shows as a band of the wrong tone.
+  */
+  background: var(--surface-alt, #faf8f3);
+}
+
+.drop__pin {
+  position: relative;
+  height: 100vh;
+  min-height: 560px;
+  /*
+    Load-bearing: the bag starts 118vh above its resting place and the
+    streaks run from 104vh below to 26vh above. Without this they are drawn
+    over the sections either side of the pin.
+  */
+  overflow: hidden;
+  display: grid;
+  /* The bag's stage takes the free space; the copy sits under it in its own
+     row so the two never overlap however tall the frame is. */
+  grid-template-rows: minmax(0, 1fr) auto;
+  place-items: center;
+}
+
+/* ---- The shaft of light ----
+   What the leaf uncovers, and what the bag drops out of. A soft cone
+   brightest at the top of the frame, fading before it reaches the floor —
+   light entering from above rather than a glow sitting in the middle. */
+
+.drop__shaft {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  /* Wider than the bag at the bottom so the bag travels down THROUGH it
+     rather than alongside it. */
+  width: min(58vw, 720px);
+  height: 88%;
+  transform: translateX(-50%);
+  z-index: 0;
+  pointer-events: none;
+  /*
+    ONE radial gradient, sized to the element, rather than stacked linear
+    layers behind a mask.
+
+    The earlier version used a narrow (42%-wide) `no-repeat` core gradient
+    over a full-width wash, with a radial mask meant to soften the result
+    into a cone. It did not: a background layer narrower than its box has
+    hard vertical boundaries where it stops, and the mask's falloff ended at
+    78% — inside those edges rather than past them — so the shaft rendered as
+    a rectangle with two seams down it.
+
+    A single ellipse centred above the top edge has no boundary to hide. It
+    is widest where it crosses the frame and fades out in every direction, so
+    the cone shape comes from the gradient itself and needs no mask at all.
+  */
+  /*
+    Warmer and more saturated than a plain white glow. The ground here is
+    cream (#faf8f3), so a pale light on it reads as nothing at all — the tone
+    has to carry enough gold to separate from the background before the
+    opacity does any work.
+  */
+  background: radial-gradient(
+    ellipse 62% 96% at 50% -6%,
+    rgba(255, 226, 150, 0.85),
+    rgba(253, 214, 122, 0.46) 32%,
+    rgba(250, 205, 104, 0.2) 60%,
+    rgba(248, 200, 96, 0) 84%
+  );
+  /* Fades out before the floor, so the light reads as coming from above
+     rather than as a panel lit from within. */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 56%,
+    transparent 96%
+  );
+  mask-image: linear-gradient(to bottom, #000 0, #000 56%, transparent 96%);
+  opacity: 0.22;
+  will-change: opacity;
+}
+
+/* ---- Airflow ---- */
+
+.drop__air {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.drop__streak {
+  position: absolute;
+  left: var(--x);
+  top: 0;
+  width: 1px;
+  height: var(--len);
+  border-radius: 1px;
+  /* Tapered at both ends: a hard-ended line reads as a rule, a faded one as
+     motion. */
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(120, 104, 68, 0.26) 22%,
+    rgba(120, 104, 68, 0.32) 55%,
+    transparent
+  );
+  /* No CSS animation — the scroll drives these, so they travel only while
+     the page does. The timeline sets opacity. */
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.drop__streak--near {
+  width: 1.6px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(104, 88, 52, 0.42) 20%,
+    rgba(104, 88, 52, 0.5) 55%,
+    transparent
+  );
+}
+
+/* ---- The bag and its floor ---- */
+
+.drop__stage {
+  position: relative;
+  grid-row: 1;
+  z-index: 2;
+  display: grid;
+  place-items: end center;
+  width: 100%;
+  height: 100%;
+  /*
+    Just enough room under the bag for the contact shadow, and no more.
+
+    Measured, the bag was resting 187px clear of the pin's floor: this
+    padding plus the copy row's own padding stacked up under it, and a bag
+    that lands well short of the ground undoes the descent it just made. The
+    shadow is ~30px tall, so that is what is reserved.
+  */
+  padding-bottom: clamp(12px, 2.2vh, 26px);
+  min-height: 0;
+}
+
+.drop__bag {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(42vw, 360px);
+  /* Measured against the row, which is the frame less the copy — a raw vh
+     here overflows the pinned frame and clips the bag's base. */
+  max-height: min(56vh, 520px);
+  object-fit: contain;
+  /*
+    Three stacked shadows rather than one soft blur: a single large blur
+    reads as a glow around the bag, not as a bag standing on a floor. The
+    tight one is the contact, the others the falloff.
+  */
+  filter: drop-shadow(0 3px 3px rgba(44, 30, 10, 0.5))
+    drop-shadow(0 14px 18px rgba(50, 36, 14, 0.3))
+    drop-shadow(0 30px 44px rgba(50, 36, 14, 0.18));
+  will-change: transform;
+}
+
+/*
+  The ground pool. Separate from the bag's own drop-shadows because it has to
+  animate independently — it spreads and fades while the bag is high, then
+  tightens as it lands, and that is the only cue for the bag's height above
+  the floor.
+*/
+.drop__shadow {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(14px, 4.4vh, 46px);
+  width: min(34vw, 300px);
+  height: clamp(14px, 3vh, 30px);
+  margin-left: min(-17vw, -150px);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(48, 34, 12, 0.5),
+    rgba(48, 34, 12, 0) 70%
+  );
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* ---- Copy ---- */
+
+.drop__copy {
+  grid-row: 2;
+  z-index: 3;
+  text-align: center;
+  padding-bottom: clamp(24px, 5vh, 56px);
+  padding-inline: 20px;
+  will-change: transform, opacity;
+}
+
+.drop__eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--brand-700, #285737);
+  opacity: 0.6;
+}
+
+.drop__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 3.2vw, 2.8rem);
+  line-height: 1.12;
+  color: var(--brand-900, #16301f);
+}
+
+/* ==========================================================================
+   Narrow screens
+   ========================================================================== */
+
+@media (max-width: 800px) {
+  /* Ten animating layers is the most expensive thing here, and on a phone the
+     bag needs the frame more than the streaks do. */
+  .drop__air { display: none; }
+
+  .drop__shaft { width: min(84vw, 420px); }
+  .drop__bag { max-width: 62vw; max-height: 46vh; }
+  .drop__shadow { width: 52vw; margin-left: -26vw; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drop__air { display: none; }
+}

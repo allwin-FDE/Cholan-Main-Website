@@ -1,0 +1,724 @@
+/* ==========================================================================
+   About — one light cream page after the approved reference. Everything is
+   scoped under .ab-*, so nothing leaks into the shared layout.
+   ========================================================================== */
+
+.ab {
+  /* The shared page background shows through (see body::before). */
+  --ab-bg: transparent;
+  --ab-card: #f7f0e1;
+  --ab-card-line: #ece2cc;
+  --ab-green: #1b3d2a;
+  --ab-green-deep: #143020;
+  background: var(--ab-bg);
+  overflow-x: clip;
+}
+
+.ab h2 {
+  margin: 0 0 18px;
+  font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: var(--ab-green);
+}
+
+.ab-eyebrow {
+  display: inline-block;
+  margin-bottom: 14px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-600);
+}
+
+/* A headline word in its own mask, so it can rise into place. */
+.ab-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.ab-word > span { display: inline-block; }
+
+.ab-icon {
+  width: 1em;
+  height: 1em;
+  flex: none;
+}
+
+/* ---- Buttons: pill-shaped, as in the reference ---- */
+
+.ab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 26px;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1;
+  border: 1.5px solid transparent;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease, color 0.2s ease;
+}
+
+.ab-btn .ab-icon { font-size: 1.05em; }
+.ab-btn:hover { transform: translateY(-2px); }
+
+.ab-btn--dark {
+  background: var(--ab-green);
+  color: #fff;
+}
+
+.ab-btn--dark:hover {
+  background: var(--brand-800);
+  box-shadow: 0 10px 24px rgba(27, 61, 42, 0.25);
+}
+
+.ab-btn--outline {
+  background: #fff;
+  color: var(--ab-green);
+  border-color: var(--ab-card-line);
+}
+
+.ab-btn--outline:hover { border-color: var(--ab-green); }
+
+.ab-btn--gold {
+  background: var(--gold-500);
+  color: var(--ab-green-deep);
+}
+
+.ab-btn--gold:hover { background: var(--gold-400); }
+
+/* ==========================================================================
+   1. The rule
+   ========================================================================== */
+
+.ab-quote {
+  padding-block: clamp(64px, 9vw, 110px) clamp(56px, 7vw, 90px);
+  text-align: center;
+}
+
+.ab-quote__mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  max-width: 560px;
+  margin: 0 auto 10px;
+  color: var(--gold-500);
+}
+
+.ab-quote__rule {
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+/* Each rule draws out FROM the mark, so they grow from their inner ends. */
+.ab-quote__rule:first-child { transform-origin: 100% 50%; }
+.ab-quote__rule:last-child { transform-origin: 0 50%; }
+
+.ab-quote__glyph {
+  height: 0.5em;
+  font-family: var(--font-display);
+  font-size: 5rem;
+  line-height: 0.9;
+}
+
+.ab-quote__text {
+  margin: 0 0 22px;
+  font-size: clamp(2.1rem, 5vw, 3.9rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--ab-green);
+}
+
+.ab-quote__caption {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* ==========================================================================
+   2. Our story
+   ========================================================================== */
+
+.ab-story {
+  padding-block: clamp(40px, 6vw, 80px) clamp(72px, 9vw, 120px);
+}
+
+.ab-story__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(40px, 7vw, 100px);
+  align-items: center;
+}
+
+.ab-story__media { position: relative; }
+
+.ab-story__frame {
+  /* The photograph's own portrait shape, so all three packs stay whole. */
+  aspect-ratio: 4 / 5;
+  max-height: 78vh;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: 0 30px 60px rgba(27, 61, 42, 0.16);
+}
+
+.ab-story__frame picture,
+.ab-story__frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* If the height cap trims it, keep the packs and lose the foreground. */
+  object-position: 50% 35%;
+}
+
+.ab-seal {
+  position: absolute;
+  right: clamp(-40px, -2.8vw, -18px);
+  bottom: clamp(-44px, -3.2vw, -22px);
+  width: clamp(128px, 13vw, 172px);
+  height: auto;
+  /* A warm, gold-tinted shadow: grey under gold reads as tarnish. */
+  filter: drop-shadow(0 16px 22px rgba(120, 78, 12, 0.35)) drop-shadow(0 3px 5px rgba(80, 50, 6, 0.3));
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.ab-story__media:hover .ab-seal { transform: rotate(-6deg) scale(1.04); }
+
+.ab-seal__bead { fill: #fff2c4; opacity: 0.85; }
+
+.ab-seal__engrave {
+  fill: none;
+  stroke: #8a5b14;
+  stroke-width: 0.9;
+  opacity: 0.8;
+}
+
+/* The engraved line's lit lower edge. */
+.ab-seal__engrave-hi {
+  fill: none;
+  stroke: #fff3cc;
+  stroke-width: 0.6;
+  opacity: 0.7;
+}
+
+.ab-seal__arc,
+.ab-seal__year,
+.ab-seal__star { text-anchor: middle; }
+
+.ab-seal__arc {
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+}
+
+.ab-seal__arc--small {
+  font-size: 8.5px;
+  letter-spacing: 0.2em;
+}
+
+.ab-seal__year {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.ab-seal__star { font-size: 8px; }
+.ab-seal__star--lg { font-size: 11px; }
+
+/* Stamped into the metal: deep bronze, over a pale copy one unit lower. */
+.ab-seal__stamp { fill: #5a3a07; }
+.ab-seal__emboss { fill: #fff6d6; opacity: 0.75; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ab-seal { transition: none; }
+  .ab-story__media:hover .ab-seal { transform: none; }
+}
+
+.ab-story__copy h2 { max-width: 13ch; }
+
+.ab-story__copy p {
+  max-width: 50ch;
+  margin: 0 0 30px;
+  color: var(--ink-soft);
+}
+
+.ab-story__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ==========================================================================
+   3. Our promise
+   ========================================================================== */
+
+.ab-promise { padding-bottom: clamp(72px, 9vw, 120px); }
+
+.ab-promise__card {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(40px, 5.5vw, 72px) clamp(20px, 4vw, 56px);
+  border-radius: 28px;
+  background: var(--ab-card);
+  border: 1px solid var(--ab-card-line);
+  text-align: center;
+}
+
+/* சோழன் — faint, behind the heading. Sized so the whole word always fits:
+   it renders ~4.6x its font size wide. */
+.ab-promise__mark {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: clamp(8px, 2vw, 28px);
+  font-family: "Noto Serif Tamil", "Nirmala UI", "Latha", serif;
+  font-size: min(16vw, 190px);
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(176, 125, 29, 0.28);
+  pointer-events: none;
+  user-select: none;
+}
+
+.ab-promise__head {
+  position: relative;
+  max-width: 640px;
+  margin: 0 auto clamp(40px, 5vw, 60px);
+}
+
+.ab-promise__head p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.ab-promise__list {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.ab-value {
+  padding: 4px clamp(14px, 2vw, 28px);
+}
+
+/* The thin rules between columns. */
+.ab-value + .ab-value { border-left: 1px solid var(--ab-card-line); }
+
+.ab-value__icon {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, #fff6e0, #f3e3bf);
+  color: var(--gold-600);
+  font-size: 34px;
+  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.ab-value__icon .ab-icon { stroke-width: 1.4; }
+
+.ab-value:hover .ab-value__icon { transform: translateY(-4px) scale(1.05); }
+
+.ab-value h3 {
+  margin: 0 0 8px;
+  font-size: 1.12rem;
+  color: var(--ab-green);
+}
+
+.ab-value p {
+  max-width: 24ch;
+  margin: 0 auto;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+/* ==========================================================================
+   4. Our journey
+   ========================================================================== */
+
+.ab-journey { padding-bottom: clamp(72px, 9vw, 120px); }
+
+.ab-journey__head {
+  text-align: center;
+  margin-bottom: clamp(36px, 5vw, 60px);
+}
+
+.ab-spine {
+  position: relative;
+  max-width: 900px;
+  margin-inline: auto;
+}
+
+.ab-spine__track {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--ab-card-line);
+  border-radius: 2px;
+}
+
+.ab-spine__fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--gold-400), var(--gold-600));
+  transform-origin: 50% 0;
+  border-radius: 2px;
+}
+
+.ab-spine__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ab-stop {
+  position: relative;
+  display: flex;
+  /* Cards overlap in height so the zig-zag reads as one path. */
+  margin-bottom: -28px;
+}
+
+.ab-stop:last-child { margin-bottom: 0; }
+
+.ab-stop--left { justify-content: flex-start; }
+.ab-stop--right { justify-content: flex-end; }
+
+.ab-stop__dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  /* Solid, so the dot hides the timeline line running behind it. */
+  background: var(--page-bg);
+  border: 2px solid var(--gold-500);
+  transition: background 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* The dot lights with a pop and a ring that ripples out once. */
+.ab-stop.is-lit .ab-stop__dot {
+  background: var(--gold-500);
+  box-shadow: 0 0 0 6px rgba(210, 155, 44, 0.18);
+  animation: ab-dot-pop 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.6);
+}
+
+.ab-stop.is-lit .ab-stop__dot::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid var(--gold-500);
+  animation: ab-dot-ripple 0.9s ease-out forwards;
+}
+
+@keyframes ab-dot-pop {
+  0% { transform: scale(0.6); }
+  100% { transform: scale(1); }
+}
+
+@keyframes ab-dot-ripple {
+  from { transform: scale(1); opacity: 0.8; }
+  to { transform: scale(3.2); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ab-stop.is-lit .ab-stop__dot,
+  .ab-stop.is-lit .ab-stop__dot::after { animation: none; }
+}
+
+.ab-stop__card {
+  width: calc(50% - clamp(28px, 4vw, 48px));
+  padding: clamp(20px, 2.4vw, 28px);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(27, 61, 42, 0.08);
+  transition: box-shadow 0.4s ease;
+}
+
+.ab-stop.is-lit .ab-stop__card { box-shadow: 0 16px 40px rgba(27, 61, 42, 0.12); }
+
+.ab-stop--left .ab-stop__card { text-align: right; }
+
+.ab-stop__year {
+  display: block;
+  margin-bottom: 6px;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.4vw, 2rem);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--gold-600);
+}
+
+.ab-stop__card h3 {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+  color: var(--ab-green);
+}
+
+.ab-stop__card p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+/* ==========================================================================
+   5. Our products
+   ========================================================================== */
+
+.ab-products { padding-bottom: clamp(72px, 9vw, 120px); }
+
+.ab-products__inner {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+
+.ab-products__copy h2 { max-width: 12ch; }
+
+.ab-products__copy p {
+  max-width: 44ch;
+  margin: 0 0 28px;
+  color: var(--ink-soft);
+}
+
+.ab-products__packs {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 24px;
+}
+
+.ab-pack {
+  position: relative;
+  width: clamp(120px, 14vw, 200px);
+  margin-inline: clamp(-26px, -1.8vw, -12px);
+}
+
+/* Centre bag forward and taller, as in the reference. */
+.ab-pack:nth-child(2) { z-index: 2; width: clamp(136px, 16vw, 228px); }
+
+.ab-pack__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.ab-pack:hover .ab-pack__img { transform: translateY(-10px); }
+
+/* ==========================================================================
+   6. Visit us
+   ========================================================================== */
+
+.ab-visit { padding-bottom: clamp(64px, 8vw, 110px); }
+
+/*
+  A quiet panel: warm white, a hairline edge, one soft shadow. The copy on
+  the left; the details on the right as a plain list divided by hairlines,
+  each with a small gold line icon — no boxes within the box.
+*/
+.ab-visit__panel {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: clamp(36px, 6vw, 96px);
+  align-items: center;
+  padding: clamp(36px, 5vw, 68px) clamp(28px, 5vw, 72px);
+  border-radius: 24px;
+  color: var(--ab-green);
+  background: #fffdf8;
+  border: 1px solid #ece5d3;
+  box-shadow: 0 1px 2px rgba(60, 42, 10, 0.04), 0 18px 48px -24px rgba(60, 42, 10, 0.18);
+}
+
+.ab-visit__copy h2 { color: var(--ab-green); }
+
+.ab-visit__copy p {
+  max-width: 42ch;
+  margin: 0 0 28px;
+  color: var(--ink-soft);
+}
+
+.ab-visit__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ab-visit__actions .ab-btn--outline {
+  border-color: rgba(27, 61, 42, 0.18);
+}
+
+.ab-visit__cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ab-visit__cards li {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  padding: 22px 0;
+  border-top: 1px solid #efe8d8;
+}
+
+.ab-visit__cards li:first-child { border-top: none; padding-top: 0; }
+.ab-visit__cards li:last-child { padding-bottom: 0; }
+
+.ab-visit__icon {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  color: var(--gold-600);
+}
+
+.ab-visit__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.ab-visit__cards p {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.ab-visit__link {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ab-green);
+  border-bottom: 1px solid var(--gold-500);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.ab-visit__cards p .ab-visit__link { margin-top: 0; }
+
+.ab-visit__link:hover {
+  color: var(--gold-600);
+  border-color: var(--gold-600);
+}
+
+/* ==========================================================================
+   Narrow screens
+   ========================================================================== */
+
+@media (max-width: 960px) {
+  .ab-story__inner,
+  .ab-products__inner { grid-template-columns: 1fr; }
+
+  .ab-seal { right: 12px; bottom: -32px; }
+
+  .ab-promise__list { grid-template-columns: repeat(2, 1fr); row-gap: 36px; }
+  .ab-value:nth-child(3) { border-left: none; }
+
+  .ab-products__packs { order: -1; }
+
+  .ab-visit__panel { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .ab-quote__glyph { font-size: 4rem; }
+
+  /* The promise, compacted: the Tamil word gets its own band above the
+     heading instead of crowding the label, and the four values sit as a
+     2 x 2 grid of small tiles rather than a long single column. */
+  .ab-promise__card { padding: 28px 14px 16px; border-radius: 22px; }
+
+  .ab-promise__mark {
+    top: 18px;
+    font-size: 15vw;
+    -webkit-text-stroke-width: 1.2px;
+  }
+
+  .ab-promise__head {
+    padding-top: calc(15vw + 12px);
+    margin-bottom: 24px;
+  }
+
+  .ab-promise__head p { font-size: 0.92rem; }
+
+  .ab-promise__list {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .ab-value,
+  .ab-value + .ab-value,
+  .ab-value:nth-child(3) { border: none; }
+
+  .ab-value {
+    padding: 18px 10px 16px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  .ab-value__icon {
+    width: 52px;
+    height: 52px;
+    margin-bottom: 12px;
+    font-size: 24px;
+  }
+
+  .ab-value h3 { font-size: 0.98rem; margin-bottom: 4px; }
+
+  .ab-value p { font-size: 0.8rem; line-height: 1.45; }
+
+  /* The spine moves to the left edge and every stop hangs off it. */
+  .ab-spine__track { left: 7px; }
+
+  .ab-stop,
+  .ab-stop--right { justify-content: flex-end; margin-bottom: 18px; }
+
+  .ab-stop__dot { left: 7px; }
+
+  .ab-stop__card,
+  .ab-stop--left .ab-stop__card {
+    width: calc(100% - 32px);
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ab-btn,
+  .ab-value__icon,
+  .ab-pack__img { transition: none; }
+}

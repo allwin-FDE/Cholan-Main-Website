@@ -1,0 +1,215 @@
+/* ==========================================================================
+   Hero — the photograph runs full width across the top, shown whole.
+   No crop, no scrim, no text over it. The copy sits beneath on cream.
+   ========================================================================== */
+
+.hero {
+  --u: min(calc(100vw / 1440), 1.12px);
+  --h: var(--u);
+
+  /* Warm daylight palette, drawn from the photograph. */
+  --ink-hero: #21301c;
+  --ink-hero-soft: #47543d;
+
+  background: #faf6ea;
+}
+
+/* ---- Photograph ----
+   width:100% with auto height: the whole 3:1 frame is always visible, so the
+   section grows and shrinks with the image rather than cropping it. */
+
+.hero__photo {
+  display: block;
+  width: 100%;
+  line-height: 0;
+}
+
+.hero__photo img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ---- Copy ---- */
+
+.hero__inner {
+  max-width: var(--container);
+  margin-inline: auto;
+  padding: calc(58 * var(--u)) var(--gutter) calc(64 * var(--u));
+}
+
+.hero__copy {
+  max-width: calc(760 * var(--h));
+  margin-inline: auto;
+  text-align: center;
+}
+
+.hero__eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(12 * var(--h));
+  font-size: calc(12.5 * var(--h));
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-600);
+  margin: 0 0 calc(18 * var(--u));
+}
+
+.hero__rule {
+  width: calc(34 * var(--h));
+  height: 2px;
+  border-radius: 2px;
+  background: var(--gold-500);
+}
+
+.hero__headline {
+  font-size: calc(60 * var(--h));
+  line-height: 1.04;
+  font-weight: 400;
+  letter-spacing: -0.018em;
+  color: var(--ink-hero);
+  margin: 0 0 calc(20 * var(--u));
+}
+
+.hero__headline span { display: block; }
+
+.hero__accent {
+  color: var(--brand-600);
+  font-style: italic;
+}
+
+.hero__sub {
+  font-size: calc(17.5 * var(--h));
+  line-height: 1.6;
+  color: var(--ink-hero-soft);
+  max-width: 52ch;
+  margin: 0 auto;
+}
+
+/* ---- Actions ---- */
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: calc(22 * var(--h));
+  margin-top: calc(30 * var(--u));
+}
+
+/* Solid pill for the primary action only. */
+.hero__pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: calc(196 * var(--h));
+  padding: calc(15 * var(--h)) calc(30 * var(--h));
+  border-radius: 999px;
+  background: var(--brand-700);
+  color: #fff;
+  font-size: calc(15.5 * var(--h));
+  font-weight: 600;
+  box-shadow: 0 10px 26px rgba(24, 48, 30, 0.24);
+  transition: transform 0.18s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero__pill:hover {
+  transform: translateY(-2px);
+  background: var(--brand-800);
+  box-shadow: 0 14px 34px rgba(24, 48, 30, 0.3);
+}
+
+/* Secondary is ghost text with a hairline rule, not a second button. */
+.hero__ghost {
+  font-size: calc(15.5 * var(--h));
+  font-weight: 600;
+  color: var(--brand-800);
+  padding-bottom: 3px;
+  border-bottom: 1px solid rgba(40, 87, 55, 0.4);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.hero__ghost:hover {
+  color: var(--gold-600);
+  border-bottom-color: var(--gold-600);
+}
+
+/* ---- Trust strip ---- */
+
+.hero__strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: calc(14 * var(--u)) calc(28 * var(--h));
+  margin: calc(34 * var(--u)) auto 0;
+  padding: calc(24 * var(--u)) 0 0;
+  max-width: calc(720 * var(--h));
+  border-top: 1px solid rgba(40, 87, 55, 0.2);
+  list-style: none;
+}
+
+.hero__strip li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  text-align: center;
+}
+
+.hero__strip strong {
+  font-size: calc(13 * var(--h));
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brand-800);
+}
+
+.hero__strip span {
+  font-size: calc(12.5 * var(--h));
+  color: var(--ink-hero-soft);
+}
+
+/* ---- Entrance ---- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__eyebrow,
+  .hero__headline,
+  .hero__sub,
+  .hero__actions,
+  .hero__strip {
+    animation: hero-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .hero__headline { animation-delay: 0.06s; }
+  .hero__sub { animation-delay: 0.14s; }
+  .hero__actions { animation-delay: 0.22s; }
+  .hero__strip { animation-delay: 0.3s; }
+}
+
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(calc(14 * var(--u))); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Narrow ----
+   The image keeps its full 3:1 frame, so it becomes a thin band on a phone.
+   The copy takes over as the anchor; scale it against viewport width. */
+
+@media (max-width: 900px) {
+  .hero { --u: min(calc(100vw / 760), 1.06px); }
+  .hero__headline { font-size: calc(50 * var(--h)); }
+}
+
+@media (max-width: 600px) {
+  .hero {
+    --u: min(calc(100vw / 430), 1.3px);
+  }
+
+  .hero__inner { padding-block: calc(34 * var(--u)) calc(40 * var(--u)); }
+  .hero__headline { font-size: calc(38 * var(--h)); }
+  .hero__sub { font-size: calc(15.5 * var(--h)); }
+  .hero__pill { width: 100%; }
+  .hero__actions { gap: calc(16 * var(--h)); }
+  .hero__strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

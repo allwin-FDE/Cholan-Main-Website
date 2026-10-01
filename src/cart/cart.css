@@ -1,0 +1,565 @@
+/* ==========================================================================
+   Cart — the card button, the header bag, the fly-in and the drawer.
+   ========================================================================== */
+
+/* ---------- Add to cart / stepper ----------
+   One slot, two states stacked in the same grid cell. The button collapses
+   and fades while the stepper grows in, so the card never changes size. */
+
+.atc {
+  display: grid;
+  min-height: 42px;
+}
+
+.atc > * { grid-area: 1 / 1; }
+
+.atc svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.atc__add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2a6b3c, #1d4d2b);
+  color: #fff;
+  font-family: var(--card-sans, var(--font-body));
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 16px -8px rgba(29, 77, 43, 0.8);
+  transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.25s ease,
+    box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.atc__add:hover {
+  background: linear-gradient(135deg, #2f7a44, #215834);
+  box-shadow: 0 10px 22px -8px rgba(29, 77, 43, 0.85);
+}
+
+.atc__add:hover svg { animation: atc-jiggle 0.5s ease; }
+.atc__add:active { transform: scale(0.95); }
+
+.atc__stepper {
+  display: grid;
+  grid-template-columns: 42px 1fr 42px;
+  align-items: center;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--gold-100);
+  box-shadow: inset 0 0 0 1.5px var(--gold-500);
+  opacity: 0;
+  transform: scale(0.6);
+  pointer-events: none;
+  transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.35), opacity 0.2s ease;
+}
+
+.atc--in .atc__add {
+  opacity: 0;
+  transform: scale(0.6);
+  pointer-events: none;
+}
+
+.atc--in .atc__stepper {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.atc__step {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--brand-800);
+  cursor: pointer;
+  box-shadow: 0 2px 6px -2px rgba(60, 42, 10, 0.3);
+  transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.4), background 0.2s ease, color 0.2s ease;
+}
+
+.atc__step:hover { transform: scale(1.1); }
+.atc__step:active { transform: scale(0.88); }
+
+.atc__step--plus {
+  background: var(--brand-700);
+  color: #fff;
+}
+
+.atc__step--plus:hover { background: var(--brand-800); }
+
+.atc__qty {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  height: 36px;
+  font-family: var(--card-serif, var(--font-display));
+  font-size: 1.2rem;
+  color: var(--brand-900);
+}
+
+/* Each new count rolls up into place. */
+.atc__num {
+  display: inline-block;
+  animation: atc-roll 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+}
+
+@keyframes atc-roll {
+  from { transform: translateY(80%); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+@keyframes atc-jiggle {
+  0%, 100% { transform: rotate(0); }
+  30% { transform: rotate(-12deg) translateX(-1px); }
+  60% { transform: rotate(8deg) translateX(1px); }
+}
+
+.atc__add:focus-visible,
+.atc__step:focus-visible {
+  outline: 2px solid var(--gold-500);
+  outline-offset: 3px;
+}
+
+/* ---------- The fly-in and the +1 ---------- */
+
+.cart-fly {
+  position: fixed;
+  z-index: 1002;
+  margin: 0;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 10px 14px rgba(40, 30, 8, 0.35));
+}
+
+.cart-plus {
+  position: fixed;
+  z-index: 1003;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--gold-500);
+  color: var(--brand-900);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 800;
+  pointer-events: none;
+  box-shadow: 0 6px 14px -6px rgba(150, 100, 10, 0.7);
+}
+
+/* ---------- Header bag ---------- */
+
+.cart-btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--brand-800);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.cart-btn:hover { border-color: var(--brand-600); background: var(--brand-50); }
+
+.cart-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cart-btn__count {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  display: grid;
+  place-items: center;
+  min-width: 21px;
+  height: 21px;
+  padding: 0 5px;
+  border-radius: 999px;
+  border: 2px solid #fff;
+  background: var(--gold-500);
+  color: var(--brand-900);
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 1;
+  animation: cart-count 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.6);
+}
+
+@keyframes cart-count {
+  from { transform: scale(0.3); }
+  to { transform: scale(1); }
+}
+
+/* The bag catches the flying pack. */
+.cart-btn--land { animation: cart-land 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.4); }
+
+@keyframes cart-land {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.22) rotate(-8deg); }
+  60% { transform: scale(0.94) rotate(4deg); }
+  100% { transform: scale(1); }
+}
+
+/* ---------- Drawer ---------- */
+
+.cart {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0s linear 0.45s;
+}
+
+.cart--open {
+  pointer-events: auto;
+  visibility: visible;
+  transition: none;
+}
+
+.cart__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(16, 36, 26, 0.45);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.cart--open .cart__backdrop { opacity: 1; }
+
+.cart__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(430px, 100vw);
+  background: #fffdf8;
+  box-shadow: -20px 0 50px -20px rgba(16, 36, 26, 0.5);
+  outline: none;
+  transform: translateX(100%);
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.cart--open .cart__panel { transform: none; }
+
+.cart__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 24px;
+  border-bottom: 1px solid #ece5d3;
+}
+
+.cart__head h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.cart__head-count {
+  display: grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--gold-100);
+  color: var(--gold-600);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.cart__close {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid #ece5d3;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--brand-800);
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.2s ease;
+}
+
+.cart__close:hover { transform: rotate(90deg); background: var(--brand-50); }
+
+.cart__close svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.cart__list {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: 0;
+  padding: 8px 24px;
+  list-style: none;
+}
+
+.cart__line {
+  display: grid;
+  grid-template-columns: 72px 1fr auto;
+  gap: 14px;
+  align-items: start;
+  padding: 16px 0;
+  border-bottom: 1px dashed #e6dcc3;
+}
+
+/* Lines slide in one after another as the drawer opens. */
+.cart--open .cart__line {
+  animation: cart-line 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(0.12s + var(--i, 0) * 0.05s);
+}
+
+@keyframes cart-line {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: none; }
+}
+
+.cart__thumb {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 14px;
+  background: linear-gradient(160deg, #fcf1d6, #f2d9a0);
+  overflow: hidden;
+}
+
+.cart__thumb[data-cat="millets"] { background: linear-gradient(160deg, #eef2de, #d3e0b0); }
+.cart__thumb[data-cat="oils"] { background: linear-gradient(160deg, #fdefd2, #f5c77a); }
+.cart__thumb[data-cat="pulses"] { background: linear-gradient(160deg, #fbe8dc, #edbd9e); }
+
+.cart__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 6px;
+}
+
+.cart__thumb span {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--brand-700);
+}
+
+.cart__info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.cart__name {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  line-height: 1.25;
+  color: var(--brand-900);
+}
+
+.cart__name:hover { color: var(--gold-600); }
+
+.cart__meta {
+  font-size: 0.8rem;
+  color: var(--ink-mute);
+}
+
+.cart__qty {
+  display: inline-grid;
+  grid-template-columns: 30px 32px 30px;
+  align-items: center;
+  justify-items: center;
+  align-self: flex-start;
+  margin-top: 8px;
+  border: 1px solid #e6dcc3;
+  border-radius: 999px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.cart__qty button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--brand-800);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.cart__qty button:hover { background: var(--gold-100); }
+
+.cart__qty span {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.cart__end {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.cart__total {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--brand-900);
+  white-space: nowrap;
+}
+
+.cart__remove {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-mute);
+  font-size: 0.76rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.cart__remove:hover { color: #b3412a; }
+
+.cart__foot {
+  padding: 18px 24px 24px;
+  border-top: 1px solid #ece5d3;
+  background: #fff;
+  box-shadow: 0 -12px 24px -18px rgba(60, 42, 10, 0.3);
+}
+
+.cart__sum {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+}
+
+.cart__sum strong {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--brand-900);
+}
+
+.cart__note {
+  margin: 0 0 6px;
+  font-size: 0.78rem;
+  color: var(--ink-mute);
+}
+
+.cart__order {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  margin-top: 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2a6b3c, #1d4d2b);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 12px 26px -12px rgba(29, 77, 43, 0.9);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cart__order:hover { transform: translateY(-2px); box-shadow: 0 16px 30px -12px rgba(29, 77, 43, 0.95); }
+
+.cart__order svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.25s ease;
+}
+
+.cart__order:hover svg { transform: translateX(4px); }
+
+.cart__clear {
+  display: block;
+  margin: 12px auto 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-mute);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.cart__clear:hover { color: #b3412a; }
+
+.cart__empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--ink-mute);
+}
+
+.cart__empty-icon {
+  font-size: 3rem;
+  animation: cart-sway 3s ease-in-out infinite;
+}
+
+@keyframes cart-sway {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atc__num,
+  .cart-btn__count,
+  .cart-btn--land,
+  .cart--open .cart__line,
+  .cart__empty-icon { animation: none; }
+}

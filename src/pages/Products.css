@@ -1,0 +1,137 @@
+.filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.filters__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-family: var(--font-body);
+  font-size: 0.87rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.chip:hover { border-color: var(--brand-500); color: var(--brand-700); }
+
+.chip--on {
+  background: var(--brand-700);
+  border-color: var(--brand-700);
+  color: #fff;
+}
+
+.filters__tools {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.input {
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--ink);
+  min-width: 190px;
+}
+
+.input:focus {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.results-count {
+  font-size: 0.86rem;
+  margin: 20px 0 28px;
+}
+
+.empty {
+  text-align: center;
+  padding: 72px 20px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-alt);
+}
+
+.empty h3 { margin-bottom: 6px; }
+.empty p { margin-bottom: 20px; }
+
+@media (max-width: 640px) {
+  .filters__tools { width: 100%; }
+  .filters__tools .input { flex: 1; min-width: 0; }
+}
+
+/* With no banner above it, the full section padding left a blank band under
+   the header; the filters sit closer to the top instead. */
+.section.products-page {
+  padding-top: clamp(28px, 4vw, 44px);
+}
+
+/* ---- The catalogue grid ----
+   Three to a row, kept compact: the grid is capped narrower than the page
+   and centred, the pack frame is shorter than a square, and the card's type
+   and spacing step down a size. Two on tablets, one on phones. */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: clamp(22px, 2.6vw, 36px);
+  row-gap: clamp(28px, 3.4vw, 44px);
+  max-width: 1020px;
+  margin: 8px auto 0;
+}
+
+.products-grid .card { border-radius: 18px; }
+.products-grid .card__media { aspect-ratio: 5 / 4; }
+.products-grid .card__media img { padding: 9% 16% 11%; }
+.products-grid .card__body { padding: 16px 18px 18px; }
+.products-grid .card__title { font-size: 1.16rem; margin-bottom: 4px; }
+.products-grid .card__tagline { font-size: 0.82rem; margin-bottom: 10px; }
+.products-grid .card__packs { margin-bottom: 12px; }
+.products-grid .card__packs li { padding: 3px 9px; font-size: 0.7rem; }
+.products-grid .card__foot { padding-top: 12px; }
+.products-grid .card__price { font-size: 1.4rem; margin-bottom: 12px; }
+.products-grid .card__price--ask { font-size: 0.88rem; }
+.products-grid .card__details,
+.products-grid .atc__add { min-height: 38px; padding: 0 14px; font-size: 0.82rem; }
+.products-grid .atc { min-height: 38px; }
+.products-grid .atc__stepper { grid-template-columns: 34px 1fr 34px; padding: 2px; }
+.products-grid .atc__step { width: 32px; height: 32px; }
+.products-grid .atc__qty { height: 32px; font-size: 1.1rem; }
+.products-grid .card__badge,
+.products-grid .card__cat { top: 11px; }
+.products-grid .card__badge { left: 11px; padding: 5px 10px; font-size: 0.62rem; }
+.products-grid .card__cat { right: 11px; font-size: 0.6rem; }
+.products-grid .card__initial { width: 72px; height: 72px; font-size: 2.3rem; }
+
+@media (max-width: 980px) {
+  .products-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 700px;
+  }
+}
+
+@media (max-width: 640px) {
+  .products-grid {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 420px;
+    row-gap: 24px;
+  }
+}

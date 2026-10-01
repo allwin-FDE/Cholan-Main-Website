@@ -1,0 +1,209 @@
+/* ==========================================================================
+   The temple. A pinned frame holding a live 3D render, with the copy set
+   into the left of it.
+
+   NAMESPACED `chola__`, NOT `temple__`.
+
+   Story.css already owns `.temple__copy`, `.temple__img`, `.temple__plate`,
+   `.temple__glow` and `.temple__warm` for its own temple chapter, and every
+   stylesheet in this app is global. Measured, the collision set this copy to
+   `left: 50%; transform: translateX(-50%); text-align: center; max-width:
+   24ch` — the heading wrapped to four lines down the middle of the temple's
+   face. Raising specificity would only have hidden the fact that two
+   components were fighting over one namespace.
+   ========================================================================== */
+
+.chola {
+  position: relative;
+  /*
+    Two viewports of runway. The camera travel is driven by how far through
+    this section the reader has scrolled, so the height IS the animation's
+    duration — one viewport would leave no distance to move through.
+  */
+  height: 200vh;
+  background: var(--brand-900, #16301f);
+}
+
+.chola__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/*
+  The sky BEFORE the model arrives.
+
+  The canvas is opaque (see the note in TempleStage.jsx — a translucent one
+  cost 6-11 second compositing stalls while scrolling), so once the temple is
+  rendering this is hidden behind it and the same gradient is drawn inside
+  the scene instead. It still earns its place: it is what fills the frame
+  during the 5.6 MB download, so the section is a lit sky rather than a dark
+  rectangle while the reader waits.
+*/
+.chola__sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    /* the low sun, behind and to the right of the tower */
+    radial-gradient(
+      60% 42% at 74% 62%,
+      rgba(255, 196, 112, 0.42),
+      rgba(255, 170, 80, 0.12) 46%,
+      transparent 74%
+    ),
+    linear-gradient(
+      to bottom,
+      #0d2417 0%,
+      #16341f 34%,
+      #23431f 62%,
+      #3b4f22 82%,
+      #55581f 100%
+    );
+}
+
+.chola__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* The element is sized by CSS and the drawing buffer by the renderer;
+     without this the canvas reports its attribute size and the render is
+     stretched. */
+  touch-action: pan-y;
+}
+
+/* ---- Loading state ----
+   A hairline that travels, not a spinner. The model is 5.6 MB so the wait is
+   real, and the point is to say "something is coming" without putting a
+   widget over the artwork. */
+
+.chola__wait {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(48px, 12vh, 120px);
+  transform: translateX(-50%);
+  z-index: 2;
+  width: min(220px, 40vw);
+  height: 1px;
+  background: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+
+.chola__waitline {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--gold-400, #e8bb56),
+    transparent
+  );
+  animation: chola-wait 1.5s ease-in-out infinite;
+}
+
+@keyframes chola-wait {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+/* ---- Copy ---- */
+
+.chola__copy {
+  position: absolute;
+  z-index: 3;
+  left: clamp(20px, 7vw, 108px);
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: min(44ch, 42vw);
+  color: rgba(255, 255, 255, 0.86);
+  /*
+    The temple renders behind this and its tiers are busy, so the copy needs
+    its own ground. A shadow rather than a panel: a card here would cover the
+    carving the section exists to show.
+  */
+  text-shadow: 0 2px 20px rgba(6, 16, 10, 0.85), 0 1px 3px rgba(6, 16, 10, 0.7);
+}
+
+.chola__eyebrow {
+  margin: 0 0 12px;
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-400, #e8bb56);
+  opacity: 0.9;
+}
+
+.chola__title {
+  margin: 0 0 18px;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 4vw, 3.4rem);
+  line-height: 1.08;
+  color: #fff;
+}
+
+.chola__lede {
+  margin: 0;
+  font-size: clamp(0.94rem, 1.15vw, 1.06rem);
+  line-height: 1.65;
+  max-width: 38ch;
+}
+
+/* ==========================================================================
+   Narrow screens. The copy cannot sit beside the temple in a phone frame, so
+   it moves to the foot and the model takes the upper two-thirds.
+   ========================================================================== */
+
+@media (max-width: 860px) {
+  .chola__copy {
+    top: auto;
+    bottom: clamp(28px, 7vh, 72px);
+    transform: none;
+    left: 20px;
+    right: 20px;
+    max-width: none;
+  }
+
+  .chola__lede { max-width: none; }
+
+  /*
+    A scrim under the copy on narrow frames only.
+
+    Stacked vertically the copy sits over the temple's plinth, which is the
+    busiest, highest-contrast part of the model — measured, the eyebrow was
+    barely legible against it. On desktop the copy sits over open sky and the
+    text-shadow alone is enough, so this is not needed there.
+
+    Attached to the pin rather than to the copy so it spans the full width
+    and fades out upward, instead of ending on a visible box edge.
+  */
+  .chola__pin::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 46%;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(
+      to top,
+      rgba(8, 20, 12, 0.92) 0%,
+      rgba(8, 20, 12, 0.72) 34%,
+      rgba(8, 20, 12, 0.3) 68%,
+      transparent 100%
+    );
+  }
+
+  /* Clear of the copy, which now owns the bottom of the frame. */
+  .chola__wait { bottom: auto; top: 44%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chola { height: 100vh; }
+  .chola__waitline { animation: none; opacity: 0.5; }
+}

@@ -1,0 +1,386 @@
+/* ==========================================================================
+   Farm to home, by rail — a pinned, scroll-scrubbed storyline. Everything
+   that moves is a transform or an opacity, so the compositor carries it.
+   ========================================================================== */
+
+.rs {
+  position: relative;
+  z-index: 1;
+  background: #fbfaf6;
+}
+
+/* A viewport less the sticky header, as with the other pinned stages. */
+.rs__stage {
+  position: relative;
+  height: calc(100vh - var(--header-h, 74px));
+  /* The visible height on phones, not the height under a hidden toolbar. */
+  height: calc(100svh - var(--header-h, 74px));
+  overflow: hidden;
+  isolation: isolate;
+  /* Storyboard sky: white at the top, the faintest warmth at the horizon. */
+  background: linear-gradient(180deg, #ffffff 0%, #fdfcf8 55%, #f6f3e8 100%);
+}
+
+/* ---- Beat 1: the bridge ----
+   The layers live in a "world" box with the storyboard's 1280x832 shape,
+   sized to cover the stage the way object-fit: cover would. Positions are in
+   percent of that box, so the composition holds at every screen size.
+
+   Two boxes: .rs__frame is sized and centred by CSS (and re-centred by it on
+   any resize or rotation); .rs__world fills it and carries GSAP's camera
+   drift. GSAP folds a CSS translate into its own transform the first time
+   it animates an element, so the centring must never be on the animated
+   box — that is what threw the scene off after a phone rotated. */
+.rs__frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100%, calc((100vh - var(--header-h, 74px)) * 1.5385));
+  width: max(100%, calc((100svh - var(--header-h, 74px)) * 1.5385));
+  aspect-ratio: 1280 / 832;
+  translate: -50% -50%;
+}
+
+.rs__world {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.rs__layer {
+  position: absolute;
+  display: block;
+  max-width: none;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  /* Every layer moves on its own GPU layer, so scrolling never repaints the
+     scene — repainting big, zoomed images each frame is what flickers. */
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Far fields and palms, behind the bridge. */
+.rs__fields {
+  left: -5%;
+  width: 110%;
+  top: 60%;
+}
+
+/* The bridge: gantries at 40%, rails at ~70% of the frame. */
+.rs__bridge {
+  left: -1%;
+  width: 102%;
+  top: 40.5%;
+}
+
+/*
+  The Cholan station nameboard, standing on the deck behind the rails. Its
+  feet sit on the rail line (~69% of the world's height); about 15.5% tall,
+  so the name clears the roofs as the train passes. Placed between the first
+  two gantries, where the opening frame is empty.
+*/
+.rs__board {
+  left: 17%;
+  width: 8.5%;
+  top: 53.5%;
+  filter: drop-shadow(0 6px 8px rgba(40, 30, 10, 0.25));
+}
+
+/*
+  The full train: engine and four coaches (full-train6 — cut out of its
+  checkerboard backdrop and levelled from a ~0.4° lean). 96% of the world
+  wide, so the whole train fits on screen as it passes, at 21.5% of the
+  world's height — in scale with the bridge. The rail line is at 69.4% of
+  the world's height and the wheels at 99.4% of the art, so the top at 48%
+  sets the wheels onto the rails. The camera script moves it with a
+  transform (off-stage right until it runs) — the train is never still.
+*/
+.rs__train {
+  left: 0;
+  width: 96%;
+  top: 48%;
+  transform: translateX(200vw);
+  filter: drop-shadow(0 6px 6px rgba(40, 30, 10, 0.18));
+}
+
+/* The out-of-focus paddy in front, overlapping the deck. */
+.rs__paddy {
+  left: -14%;
+  width: 128%;
+  bottom: -8%;
+}
+
+/* ---- The opening line, in the empty sky ---- */
+
+.rs__intro {
+  position: absolute;
+  z-index: 3;
+  top: clamp(40px, 11vh, 110px);
+  left: 0;
+  right: 0;
+  padding: 0 24px;
+  text-align: center;
+  pointer-events: none;
+}
+
+
+/* Set like the hero headline and the brand line over the temple: heavy
+   Fraunces, tightly tracked, so the three read as one voice. */
+.rs__title {
+  max-width: 20ch;
+  margin: 0 auto;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.4vw, 3.8rem);
+  font-weight: 900;
+  font-variation-settings: "opsz" 144;
+  line-height: 0.98;
+  /* Open enough that the heavy letters and words read clearly apart. */
+  letter-spacing: 0.01em;
+  word-spacing: 0.08em;
+  color: var(--brand-900);
+  text-wrap: balance;
+}
+
+/* ---- Beat 3: the temple in the clouds ---- */
+
+.rs__sky {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  overflow: hidden;
+  background: #f7f4ea;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.rs__clouds {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Placed and centred here; GSAP animates the image inside (see .rs__frame). */
+.rs__temple-pos {
+  position: absolute;
+  left: 50%;
+  bottom: 3%;
+  width: min(84%, calc((100vh - var(--header-h, 74px)) * 1.25), 1180px);
+  width: min(84%, calc((100svh - var(--header-h, 74px)) * 1.25), 1180px);
+  translate: -50% 0;
+}
+
+.rs__temple {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: none;
+  transform-origin: 50% 100%;
+}
+
+/* Mist over the temple's lower half: soft, edgeless, layered radials in the
+   cloud's own cream. It thins as the temple climbs clear. */
+.rs__mist {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: -6%;
+  height: 72%;
+  background:
+    radial-gradient(ellipse 40% 55% at 30% 70%, rgba(250, 248, 238, 0.98), transparent 70%),
+    radial-gradient(ellipse 45% 50% at 68% 62%, rgba(250, 248, 238, 0.95), transparent 70%),
+    radial-gradient(ellipse 60% 45% at 50% 95%, rgba(250, 248, 238, 1), transparent 75%),
+    linear-gradient(180deg, transparent 0%, rgba(250, 248, 238, 0.85) 60%, #faf8ee 100%);
+  pointer-events: none;
+}
+
+/* A permanent low bank of cloud: hides the straight cut along the base of
+   the temple artwork. */
+.rs__ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 16%;
+  background: linear-gradient(180deg, rgba(250, 248, 238, 0) 0%, rgba(250, 248, 238, 0.92) 55%, #faf8ee 100%);
+  pointer-events: none;
+}
+
+/* The brand line: heavy serif in the open cloud left of the vimana. */
+.rs__brand {
+  position: absolute;
+  z-index: 2;
+  left: clamp(24px, 5.5vw, 104px);
+  top: 0;
+  bottom: 0;
+  height: fit-content;
+  margin-block: auto;
+  max-width: min(38vw, 680px);
+  pointer-events: none;
+}
+
+/* A soft pool of cream behind the type, so it holds over any cloud. */
+.rs__brand::before {
+  content: "";
+  position: absolute;
+  inset: -22% -18% -22% -30%;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgba(251, 249, 240, 0.85), rgba(251, 249, 240, 0) 100%);
+}
+
+.rs__brand-kicker {
+  display: inline-block;
+  margin-bottom: 18px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--gold-600);
+}
+
+.rs__brand-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4.5vw, 4.6rem);
+  font-weight: 900;
+  font-variation-settings: "opsz" 144;
+  line-height: 0.94;
+  /* Open enough that the heavy letters and words read clearly apart. */
+  letter-spacing: 0.01em;
+  word-spacing: 0.08em;
+  color: var(--brand-900);
+}
+
+.rs__line {
+  display: block;
+}
+
+/* Each word in a mask; the inner span rises into it. */
+.rs__word {
+  display: inline-block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+  vertical-align: top;
+}
+
+.rs__word > span {
+  display: inline-block;
+}
+
+.rs__brand-rule {
+  display: block;
+  width: 72px;
+  height: 3px;
+  margin: 26px 0 20px;
+  background: linear-gradient(90deg, var(--gold-600), var(--gold-400));
+  transform-origin: 0 50%;
+}
+
+.rs__brand-lede {
+  margin: 0;
+  max-width: 30ch;
+  font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+  line-height: 1.55;
+  color: var(--brand-800, #24402c);
+}
+
+/* The cloud the bridge whites out into. */
+.rs__white {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  background: #fff;
+}
+
+/* ---- Progress line ---- */
+
+.rs__progress {
+  position: absolute;
+  z-index: 8;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: rgba(22, 48, 31, 0.08);
+}
+
+.rs__progress-fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-600), var(--gold-400));
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+
+/* ---- Portrait: a wider-than-screen world standing on the stage floor ----
+   Cover-cropping the 1280x832 scene into a tall screen would keep only its
+   middle third and cut the train in half. Instead the world is twice the
+   screen's width, sits on the bottom edge, and the white sky above it is the
+   stage's own — the storyboard sky is white too, so the join is invisible. */
+@media (max-aspect-ratio: 1/1) {
+  /* Half the size on portrait, so the whole train fits the screen's slice. */
+  .rs__train { width: 48%; top: 58.7%; }
+  /* Scaled with the train, inside the slice of the world a tall screen shows. */
+  .rs__board { left: 27%; width: 6.5%; top: 57.2%; }
+
+  .rs__frame {
+    width: 200vw;
+    top: auto;
+    bottom: 0;
+    translate: -50% 0;
+  }
+}
+
+/* ---- Phones: the opening line a little lower, clear of the gantries ---- */
+
+@media (max-width: 800px) {
+  .rs__intro { top: clamp(28px, 8vh, 64px); }
+  /* The vimana sits at ~70% across the artwork; centre it, not the art. */
+  .rs__temple-pos { width: min(135%, 900px); translate: -70% 0; }
+
+  /* The brand line centred in the sky above the vimana. */
+  .rs__brand {
+    left: 20px;
+    right: 20px;
+    top: clamp(28px, 7vh, 72px);
+    bottom: auto;
+    margin: 0;
+    max-width: none;
+    text-align: center;
+  }
+  .rs__brand::before { inset: -20% -10%; }
+  /* Capped by the width too: the longer line is 5.84em, so it always fits
+     between the 20px margins. */
+  .rs__brand-title { font-size: min(clamp(2.5rem, 11.5vw, 4rem), calc((100vw - 48px) / 6)); }
+  .rs__brand-rule { margin: 18px auto 14px; transform-origin: 50% 50%; }
+  .rs__brand-lede { margin-inline: auto; max-width: 30ch; font-size: 0.98rem; }
+}
+
+/* ==========================================================================
+   Reduced motion: no pin, no scrub — the bridge with the train on it, and
+   the line above.
+   ========================================================================== */
+
+.rs--static .rs__stage { height: min(80vh, 65vw); min-height: 360px; }
+/* Centred on the bridge: (100% - its width) / 2. */
+.rs--static .rs__train { left: 2%; transform: none; }
+@media (max-aspect-ratio: 1/1) { .rs--static .rs__train { left: 26%; } }
+
+.rs--static .rs__sky,
+.rs--static .rs__white,
+.rs--static .rs__progress { display: none; }
+
+/* ---- Phones on their side: a short stage, so a smaller opening line that
+   stays above the gantries ---- */
+@media (max-height: 500px) and (orientation: landscape) {
+  .rs__intro { top: 14px; }
+  .rs__title { font-size: clamp(1.4rem, 3.4vw, 2rem); }
+  .rs__brand-title { font-size: clamp(1.8rem, 5vw, 2.6rem); }
+  .rs__brand-lede { font-size: 0.9rem; }
+}
