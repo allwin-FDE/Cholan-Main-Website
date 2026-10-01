@@ -105,51 +105,6 @@
   z-index: 2;
 }
 
-/* ---------- Cursor ring ---------- */
-
-.fx-cursor {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 999;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-
-.fx-cursor.is-on { opacity: 1; }
-
-.fx-cursor::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 32px;
-  height: 32px;
-  border: 1.5px solid rgba(176, 125, 29, 0.75);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
-    background 0.3s ease, border-color 0.3s ease, transform 0.15s ease;
-}
-
-.fx-cursor[data-state="link"]::before {
-  width: 56px;
-  height: 56px;
-  background: rgba(232, 187, 86, 0.16);
-  border-color: rgba(176, 125, 29, 0.5);
-}
-
-.fx-cursor[data-state="text"]::before {
-  width: 6px;
-  height: 6px;
-  background: var(--gold-600);
-}
-
-.fx-cursor.is-down::before { transform: translate(-50%, -50%) scale(0.82); }
-
 /* ---------- Back to top ---------- */
 
 .fx-top {
@@ -303,7 +258,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fx-cursor,
   .fx-wipe { display: none; }
   .chip--on { animation: none; }
 }

@@ -8,7 +8,6 @@ import gsap from "gsap";
     * Tilt      cards lean toward the pointer, with a glint of light where
                 it sits (mouse and trackpad only).
     * Magnet    buttons are drawn a little toward the pointer.
-    * Cursor    a ring trails the pointer and swells over anything clickable.
     * Grains    a tap or click on anything interactive throws a small burst
                 of rice grains.
     * To top    a button that fills its ring as the page is read.
@@ -23,7 +22,6 @@ const SKIP = ".curtain, .rs, .temple";
 const GRAIN_COLOURS = ["#e8bb56", "#d29b2c", "#f6ebcf", "#fffdf5", "#b07d1d"];
 
 export default function Interactions() {
-  const cursorRef = useRef(null);
   const [showTop, setShowTop] = useState(false);
   const ringRef = useRef(null);
 
@@ -96,31 +94,10 @@ export default function Interactions() {
       gsap.to(el, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.4)", clearProps: "transform" });
     };
 
-    /* ---------- Cursor ---------- */
-    const cursor = cursorRef.current;
-    const cx = gsap.quickTo(cursor, "x", { duration: 0.35, ease: "power3.out" });
-    const cy = gsap.quickTo(cursor, "y", { duration: 0.35, ease: "power3.out" });
-    let cursorState = "";
-    const setCursor = (state) => {
-      if (state === cursorState) return;
-      cursorState = state;
-      cursor.dataset.state = state;
-    };
-
     on(document, "pointermove", (e) => {
       if (e.pointerType !== "mouse") return;
       const { clientX: x, clientY: y, target } = e;
-      cursor.classList.add("is-on");
-      cx(x);
-      cy(y);
-
       const inSkip = target.closest?.(SKIP);
-
-      // Cursor state.
-      if (inSkip) setCursor("");
-      else if (target.closest("input, textarea")) setCursor("text");
-      else if (target.closest(CLICKABLE)) setCursor("link");
-      else setCursor("");
 
       // Magnet.
       const m = inSkip ? null : target.closest(MAGNET);
@@ -156,12 +133,9 @@ export default function Interactions() {
     });
 
     on(document, "pointerleave", () => {
-      cursor.classList.remove("is-on");
       untilt();
       release();
     });
-    on(document, "pointerdown", () => cursor.classList.add("is-down"));
-    on(document, "pointerup", () => cursor.classList.remove("is-down"));
     // A route change swaps the page under a still pointer.
     on(window, "scroll", () => {
       untilt();
@@ -202,7 +176,6 @@ export default function Interactions() {
 
   return (
     <>
-      <div className="fx-cursor" ref={cursorRef} aria-hidden="true" />
 
       <button
         type="button"
