@@ -51,6 +51,8 @@
 /* ---- Form ---- */
 
 .contact__form {
+  /* Scrolled to from a product's Enquire: clear of the sticky header. */
+  scroll-margin-top: calc(var(--header-h, 74px) + 16px);
   padding: 34px;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);

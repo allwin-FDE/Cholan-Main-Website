@@ -4,44 +4,26 @@ import { Flip } from "gsap/Flip";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
-import { categories, hasPhoto, priceFrom, products } from "../data/products";
-import { features } from "../data/site";
+import { categories, hasPhoto, products } from "../data/products";
 import "./Products.css";
 
 gsap.registerPlugin(Flip, ScrollTrigger);
 
-// The price orders only appear while prices are shown.
-const sortOptions = [
-  { value: "featured", label: "Featured first" },
-  { value: "name", label: "Name (A–Z)" },
-  ...(features.prices
-    ? [
-        { value: "price-asc", label: "Price: low to high" },
-        { value: "price-desc", label: "Price: high to low" },
-      ]
-    : []),
-];
-
-// Shown first, in this order, under "Featured first".
+// Shown first, in this order.
 const PINNED = ["idly-rice", "karikalan-rice", "moongil-rice"];
 const pinRank = (p) => {
   const i = PINNED.indexOf(p.id);
   return i < 0 ? PINNED.length : i;
 };
 
-// Unpriced products sort last in both price orders, never first.
-const priceAsc = (p) => priceFrom(p) ?? Infinity;
-const priceDesc = (p) => priceFrom(p) ?? -Infinity;
-
 export default function Products() {
   // Category lives in the URL so links like /products?category=millets work.
   const [searchParams, setSearchParams] = useSearchParams();
   const activeCategory = searchParams.get("category") || "all";
   const [query, setQuery] = useState("");
-  const [sort, setSort] = useState("featured");
 
   /*
-    Filtering and sorting shuffle the cards rather than swap them: the layout
+    Filtering and searching shuffle the cards rather than swap them: the layout
     is recorded just before the change and the cards glide from there to
     their new places, while newcomers pop in.
   */
@@ -75,29 +57,17 @@ export default function Products() {
       );
     }
 
-    switch (sort) {
-      case "name":
-        list.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case "price-asc":
-        list.sort((a, b) => priceAsc(a) - priceAsc(b));
-        break;
-      case "price-desc":
-        list.sort((a, b) => priceDesc(b) - priceDesc(a));
-        break;
-      default:
-        // The pinned products lead; then products with real pack photos,
-        // so the bags read as one run; bestsellers lead within each group.
-        list.sort(
-          (a, b) =>
-            pinRank(a) - pinRank(b) ||
-            Number(hasPhoto(b)) - Number(hasPhoto(a)) ||
-            Number(!!b.featured) - Number(!!a.featured)
-        );
-    }
+    // The pinned products lead; then products with real pack photos, so the
+    // bags read as one run; bestsellers lead within each group.
+    list.sort(
+      (a, b) =>
+        pinRank(a) - pinRank(b) ||
+        Number(hasPhoto(b)) - Number(hasPhoto(a)) ||
+        Number(!!b.featured) - Number(!!a.featured)
+    );
 
     return list;
-  }, [activeCategory, query, sort]);
+  }, [activeCategory, query]);
 
   useLayoutEffect(() => {
     const state = flipState.current;
@@ -161,9 +131,13 @@ export default function Products() {
             </div>
 
             <div className="filters__tools">
+              <svg className="filters__search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-3.5-3.5" />
+              </svg>
               <input
                 type="search"
-                className="input"
+                className="input filters__search"
                 placeholder="Search products…"
                 value={query}
                 onChange={(e) => {
@@ -172,21 +146,6 @@ export default function Products() {
                 }}
                 aria-label="Search products"
               />
-              <select
-                className="input"
-                value={sort}
-                onChange={(e) => {
-                  capture();
-                  setSort(e.target.value);
-                }}
-                aria-label="Sort products"
-              >
-                {sortOptions.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
             </div>
           </div>
 

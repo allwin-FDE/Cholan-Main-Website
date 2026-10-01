@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import PageHero from "../components/PageHero";
+import { getProduct } from "../data/products";
 import { site, whatsappLink } from "../data/site";
 import "./Contact.css";
 
@@ -12,8 +14,34 @@ const emptyForm = {
 };
 
 export default function Contact() {
-  const [form, setForm] = useState(emptyForm);
+  // Arriving from a product's Enquire button (/contact?product=idly-rice):
+  // the form starts as a question about that product.
+  const [params] = useSearchParams();
+  const product = getProduct(params.get("product") || "");
+  const [form, setForm] = useState(() =>
+    product
+      ? {
+          ...emptyForm,
+          enquiryType: "Product question",
+          message: `I would like to know more about ${product.name}${
+            product.packs.length ? ` (${product.packs.map((p) => p.size).join(" / ")})` : ""
+          }. Please share the price and availability.`,
+        }
+      : emptyForm
+  );
   const [sent, setSent] = useState(false);
+
+  // On narrow screens the form sits below the contact details: bring it up.
+  useEffect(() => {
+    if (!product) return;
+    const t = setTimeout(() => {
+      const el = document.querySelector(".contact__form");
+      if (el && el.getBoundingClientRect().top > window.innerHeight * 0.6) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 500);
+    return () => clearTimeout(t);
+  }, [product]);
 
   const update = (field) => (e) =>
     setForm((f) => ({ ...f, [field]: e.target.value }));

@@ -35,11 +35,40 @@
   color: #fff;
 }
 
+/* The search: the one tool beside the chips, wide and roomy, with a
+   magnifier inside its left edge. */
 .filters__tools {
+  position: relative;
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  flex: 1 1 340px;
+  max-width: 520px;
 }
+
+.filters__search-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translateY(-50%);
+  fill: none;
+  stroke: var(--ink-mute);
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.filters__tools .filters__search {
+  flex: 1;
+  min-width: 0;
+  height: 52px;
+  padding: 0 20px 0 50px;
+  border-radius: 999px;
+  font-size: 1rem;
+  box-shadow: 0 6px 18px -12px rgba(60, 42, 10, 0.35);
+}
+
+.filters__search::placeholder { color: var(--ink-mute); }
 
 .input {
   padding: 10px 14px;
@@ -75,8 +104,7 @@
 .empty p { margin-bottom: 20px; }
 
 @media (max-width: 640px) {
-  .filters__tools { width: 100%; }
-  .filters__tools .input { flex: 1; min-width: 0; }
+  .filters__tools { flex-basis: 100%; max-width: none; }
 }
 
 /* With no banner above it, the full section padding left a blank band under
