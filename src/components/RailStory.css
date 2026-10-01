@@ -14,7 +14,11 @@
   position: relative;
   height: calc(100vh - var(--header-h, 74px));
   /* The visible height on phones, not the height under a hidden toolbar. */
-  height: calc(100svh - var(--header-h, 74px));
+  /* The LARGE viewport: on a phone the stage is pinned while the browser
+     hides its toolbar on scroll, so sizing it to the small viewport left a
+     strip of empty page under it once the bar went. With the bar showing,
+     only the blurred foreground paddy sits behind it. */
+  height: calc(100lvh - var(--header-h, 74px));
   overflow: hidden;
   isolation: isolate;
   /* Storyboard sky: white at the top, the faintest warmth at the horizon. */
@@ -36,7 +40,7 @@
   left: 50%;
   top: 50%;
   width: max(100%, calc((100vh - var(--header-h, 74px)) * 1.5385));
-  width: max(100%, calc((100svh - var(--header-h, 74px)) * 1.5385));
+  width: max(100%, calc((100lvh - var(--header-h, 74px)) * 1.5385));
   aspect-ratio: 1280 / 832;
   translate: -50% -50%;
 }
@@ -168,7 +172,7 @@
   left: 50%;
   bottom: 3%;
   width: min(84%, calc((100vh - var(--header-h, 74px)) * 1.25), 1180px);
-  width: min(84%, calc((100svh - var(--header-h, 74px)) * 1.25), 1180px);
+  width: min(84%, calc((100lvh - var(--header-h, 74px)) * 1.25), 1180px);
   translate: -50% 0;
 }
 
@@ -300,12 +304,13 @@
 
 /* ---- Progress line ---- */
 
+/* Along the top of the stage, so a phone's toolbar never covers it. */
 .rs__progress {
   position: absolute;
   z-index: 8;
   left: 0;
   right: 0;
-  bottom: 0;
+  top: 0;
   height: 3px;
   background: rgba(22, 48, 31, 0.08);
 }
