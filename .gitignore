@@ -31,3 +31,7 @@ assets-source/
 .mcp.json
 tools/
 /.*.mjs
+
+# Firebase local state
+.firebase/
+firebase-debug.log
