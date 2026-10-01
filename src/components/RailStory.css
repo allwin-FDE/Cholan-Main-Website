@@ -324,23 +324,39 @@
    screen's width, sits on the bottom edge, and the white sky above it is the
    stage's own — the storyboard sky is white too, so the join is invisible. */
 @media (max-aspect-ratio: 1/1) {
-  /* Half the size on portrait, so the whole train fits the screen's slice. */
-  .rs__train { width: 48%; top: 58.7%; }
-  /* Scaled with the train, inside the slice of the world a tall screen shows. */
-  .rs__board { left: 27%; width: 6.5%; top: 57.2%; }
+  /*
+    The world is 270vw wide here, so the scene stands taller on a phone and
+    leaves less empty sky; the screen shows its middle ~37%. The train is
+    sized to that slice: 36% of the world (about one screen wide), its top at
+    61.3% putting the wheels on the rail line (69.4%).
+  */
+  .rs__train { width: 36%; top: 61.33%; }
+  /* Scaled with the train, just inside the left edge of the slice. */
+  .rs__board { left: 33%; width: 5.5%; top: 59.4%; }
 
   .rs__frame {
-    width: 200vw;
+    width: 270vw;
     top: auto;
     bottom: 0;
     translate: -50% 0;
+  }
+
+  /*
+    The opening line sits just above the gantries rather than at the top of
+    the stage, so it reads with the scene instead of floating over an empty
+    sky. The gantry tops are ~59.5% of the world's height (175.5vw) above its
+    bottom edge: 104vw.
+  */
+  .rs__intro {
+    top: auto;
+    bottom: calc(104vw + 22px);
   }
 }
 
 /* ---- Phones: the opening line a little lower, clear of the gantries ---- */
 
 @media (max-width: 800px) {
-  .rs__intro { top: clamp(28px, 8vh, 64px); }
+  .rs__title { font-size: clamp(1.7rem, 7.6vw, 2.6rem); }
   /* The vimana sits at ~70% across the artwork; centre it, not the art. */
   .rs__temple-pos { width: min(135%, 900px); translate: -70% 0; }
 
@@ -355,11 +371,11 @@
     text-align: center;
   }
   .rs__brand::before { inset: -20% -10%; }
-  /* Capped by the width too: the longer line is 5.84em, so it always fits
-     between the 20px margins. */
-  .rs__brand-title { font-size: min(clamp(2.5rem, 11.5vw, 4rem), calc((100vw - 48px) / 6)); }
-  .rs__brand-rule { margin: 18px auto 14px; transform-origin: 50% 50%; }
-  .rs__brand-lede { margin-inline: auto; max-width: 30ch; font-size: 0.98rem; }
+  /* Smaller on phones, so the temple below gets the room. */
+  .rs__brand-title { font-size: clamp(1.75rem, 8.2vw, 2.8rem); }
+  .rs__brand-kicker { font-size: 0.66rem; }
+  .rs__brand-rule { margin: 14px auto 10px; transform-origin: 50% 50%; }
+  .rs__brand-lede { margin-inline: auto; max-width: 32ch; font-size: 0.86rem; }
 }
 
 /* ==========================================================================
