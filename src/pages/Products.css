@@ -110,6 +110,7 @@
 .products-grid .card__price { font-size: 1.4rem; margin-bottom: 12px; }
 .products-grid .card__price--ask { font-size: 0.88rem; }
 .products-grid .card__details,
+.products-grid .card__enquire,
 .products-grid .atc__add { min-height: 38px; padding: 0 14px; font-size: 0.82rem; }
 .products-grid .atc { min-height: 38px; }
 .products-grid .atc__stepper { grid-template-columns: 34px 1fr 34px; padding: 2px; }

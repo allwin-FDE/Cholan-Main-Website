@@ -5,15 +5,21 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { categories, hasPhoto, priceFrom, products } from "../data/products";
+import { features } from "../data/site";
 import "./Products.css";
 
 gsap.registerPlugin(Flip, ScrollTrigger);
 
+// The price orders only appear while prices are shown.
 const sortOptions = [
   { value: "featured", label: "Featured first" },
   { value: "name", label: "Name (A–Z)" },
-  { value: "price-asc", label: "Price: low to high" },
-  { value: "price-desc", label: "Price: high to low" },
+  ...(features.prices
+    ? [
+        { value: "price-asc", label: "Price: low to high" },
+        { value: "price-desc", label: "Price: high to low" },
+      ]
+    : []),
 ];
 
 // Shown first, in this order, under "Featured first".

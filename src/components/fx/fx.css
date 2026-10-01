@@ -177,14 +177,16 @@
 
 /* Buttons: a sheen sweeps across on hover. */
 .btn,
-.atc__add {
+.atc__add,
+.card__enquire {
   position: relative;
   overflow: hidden;
   isolation: isolate;
 }
 
 .btn::after,
-.atc__add::after {
+.atc__add::after,
+.card__enquire::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -195,7 +197,8 @@
 }
 
 .btn:hover::after,
-.atc__add:hover::after {
+.atc__add:hover::after,
+.card__enquire:hover::after {
   transform: translateX(120%);
   transition: transform 0.7s ease;
 }

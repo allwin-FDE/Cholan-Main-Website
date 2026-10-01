@@ -23,6 +23,17 @@ export const site = {
   },
 };
 
+/*
+  Switches for what the shop shows. Prices are not confirmed yet, so prices
+  and the cart are off: products show without prices, and each one is
+  enquired about on WhatsApp instead of added to a cart. Set both to true
+  once the price list in products.js is final.
+*/
+export const features = {
+  prices: false,
+  cart: false,
+};
+
 // Prefilled WhatsApp enquiry link. Pass a product to make the message specific.
 export function whatsappLink(product) {
   const msg = product

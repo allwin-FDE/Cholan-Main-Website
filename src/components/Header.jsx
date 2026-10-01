@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
-import { site } from "../data/site";
+import { features, site } from "../data/site";
 import CartButton from "../cart/CartButton";
 import "./Header.css";
 
@@ -112,7 +112,7 @@ export default function Header() {
 
           <div className="header__tools">
             {/* Not on the home page; everywhere else the cart is one tap away. */}
-            {!overHero && <CartButton />}
+            {features.cart && !overHero && <CartButton />}
             <button
               className="hamburger"
               aria-label="Toggle menu"

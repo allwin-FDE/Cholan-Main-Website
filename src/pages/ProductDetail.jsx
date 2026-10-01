@@ -8,7 +8,7 @@ import {
   hasPhoto,
   products,
 } from "../data/products";
-import { site } from "../data/site";
+import { features, site } from "../data/site";
 import NotFound from "./NotFound";
 import "./ProductDetail.css";
 
@@ -64,12 +64,14 @@ export default function ProductDetail() {
               <h1>{product.name}</h1>
               <p className="pdp__tagline">{product.tagline}</p>
 
-              <div className="pdp__price">
-                {formatINR(pack.price)}
-                <span className="pdp__price-unit">
-                  {pack.size == null ? "" : pack.price == null ? ` · ${pack.size}` : ` / ${pack.size}`}
-                </span>
-              </div>
+              {features.prices && (
+                <div className="pdp__price">
+                  {formatINR(pack.price)}
+                  <span className="pdp__price-unit">
+                    {pack.size == null ? "" : pack.price == null ? ` · ${pack.size}` : ` / ${pack.size}`}
+                  </span>
+                </div>
+              )}
 
               <p className="pdp__desc">{product.description}</p>
 
@@ -84,7 +86,7 @@ export default function ProductDetail() {
                         onClick={() => setPackIndex(i)}
                       >
                         <strong>{p.size}</strong>
-                        <span>{formatINR(p.price)}</span>
+                        {features.prices && <span>{formatINR(p.price)}</span>}
                       </button>
                     ))}
                   </div>

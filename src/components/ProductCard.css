@@ -309,6 +309,32 @@
   color: var(--accent);
 }
 
+/* WhatsApp enquiry: the main action while the cart is switched off. */
+.card__enquire {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2a6b3c, #1d4d2b);
+  color: #fff;
+  font-family: var(--card-sans);
+  font-size: 0.86rem;
+  font-weight: 700;
+  box-shadow: 0 6px 16px -8px rgba(29, 77, 43, 0.8);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card__enquire svg { width: 17px; height: 17px; }
+
+.card__enquire:hover {
+  background: linear-gradient(135deg, #2f7a44, #215834);
+  box-shadow: 0 10px 22px -8px rgba(29, 77, 43, 0.85);
+}
+
+.card__enquire:focus-visible,
 .card__details:focus-visible,
 .card__title a:focus-visible {
   outline: 2px solid var(--accent);

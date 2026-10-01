@@ -7,6 +7,7 @@ import Interactions from "./components/fx/Interactions";
 import "./components/fx/fx.css";
 import { CartProvider } from "./cart/CartContext";
 import CartDrawer from "./cart/CartDrawer";
+import { features } from "./data/site";
 
 import Home from "./pages/Home";
 import Story from "./pages/Story";
@@ -54,13 +55,17 @@ function Shell() {
           <Route path="/process" element={<Navigate to="/about" replace />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/checkout" element={<Checkout />} />
+          {/* While the cart is off, an old checkout link lands on the products. */}
+          <Route
+            path="/checkout"
+            element={features.cart ? <Checkout /> : <Navigate to="/products" replace />}
+          />
           <Route path="/policies/:slug" element={<Policy />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />
-      <CartDrawer />
+      {features.cart && <CartDrawer />}
       {/* Site-wide motion and play; after the page so its effects run once
           the page's own have set up. */}
       <Motion />
