@@ -264,6 +264,11 @@ p { margin: 0 0 1em; }
   .grid--2,
   .grid--3,
   .grid--4 { grid-template-columns: 1fr; }
+  /* Product cards stay two to a row on phones. */
+  .grid:has(> .card) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 12px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -116,7 +116,7 @@
 /* ---- The catalogue grid ----
    Three to a row, kept compact: the grid is capped narrower than the page
    and centred, the pack frame is shorter than a square, and the card's type
-   and spacing step down a size. Two on tablets, one on phones. */
+   and spacing step down a size. Two on tablets and phones. */
 .products-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -159,8 +159,23 @@
 
 @media (max-width: 640px) {
   .products-grid {
-    grid-template-columns: minmax(0, 1fr);
-    max-width: 420px;
-    row-gap: 24px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 12px;
+    row-gap: 14px;
   }
+  /* The compact phone card — see ProductCard.css. */
+  .products-grid .card { border-radius: 14px; }
+  .products-grid .card__media { aspect-ratio: 1 / 1; }
+  .products-grid .card__media img { padding: 12% 12% 10%; }
+  .products-grid .card__body { padding: 10px 11px 12px; }
+  .products-grid .card__title { font-size: 0.98rem; margin-bottom: 3px; }
+  .products-grid .card__tagline { font-size: 0.72rem; margin-bottom: 8px; }
+  .products-grid .card__packs { margin-bottom: 8px; }
+  .products-grid .card__packs li { padding: 2px 7px; font-size: 0.62rem; }
+  .products-grid .card__foot { padding-top: 9px; }
+  .products-grid .card__details,
+  .products-grid .card__enquire,
+  .products-grid .atc__add { min-height: 34px; padding: 0 8px; font-size: 0.76rem; }
+  .products-grid .card__badge { top: 8px; left: 8px; padding: 3px 7px; font-size: 0.54rem; }
+  .products-grid .card__initial { width: 52px; height: 52px; font-size: 1.7rem; }
 }

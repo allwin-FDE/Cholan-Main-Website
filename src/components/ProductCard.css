@@ -343,9 +343,35 @@
 
 /* Phones show one card per row: a square would be taller than the screen is
    wide, so the pack sits in a shorter frame. */
-@media (max-width: 600px) {
-  .card__media { aspect-ratio: 5 / 4; }
-  .card__title { font-size: 1.4rem; }
+/* Phones: two cards to a row, so everything steps down to fit half the
+   width, the two buttons stack and the category label (the page already
+   says it) gives way to the badge. The products page repeats these in
+   Products.css, where its own card sizes would otherwise win. */
+@media (max-width: 640px) {
+  .card { border-radius: 14px; }
+  .card__media { aspect-ratio: 1 / 1; }
+  .card__media img { padding: 12% 12% 10%; }
+  .card__body { padding: 10px 11px 12px; }
+  .card__title { font-size: 0.98rem; line-height: 1.2; margin-bottom: 3px; }
+  .card__tagline {
+    font-size: 0.72rem;
+    line-height: 1.4;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card__packs { gap: 4px; margin-bottom: 8px; }
+  .card__packs li { padding: 2px 7px; font-size: 0.62rem; }
+  .card__foot { padding-top: 9px; }
+  .card__actions { grid-template-columns: 1fr; gap: 6px; }
+  .card__details,
+  .card__enquire { min-height: 34px; padding: 0 8px; font-size: 0.76rem; }
+  .card__enquire svg { width: 14px; height: 14px; }
+  .card__badge { top: 8px; left: 8px; padding: 3px 7px; font-size: 0.54rem; }
+  .card__cat { display: none; }
+  .card__initial { width: 52px; height: 52px; font-size: 1.7rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
