@@ -119,20 +119,37 @@ export default function Blog() {
         <div className="container">
           <div className="blog-news">
             <div className="blog-news__copy">
-              <span className="blog-news__icon" aria-hidden="true">🌾</span>
-              <h2>Recipes and offers, once a month</h2>
+              <span className="blog-news__kicker">The Cholan letter</span>
+              <h2>Recipes and offers, once a month.</h2>
               <p>No spam — just seasonal recipes, new varieties and the occasional discount for regulars.</p>
+              <ul className="blog-news__perks">
+                <li>Seasonal recipes</li>
+                <li>New varieties first</li>
+                <li>Offers for regulars</li>
+              </ul>
             </div>
-            <form
-              className="blog-news__form"
-              onSubmit={(e) => {
-                e.preventDefault();
-                alert("Newsletter signup — connect this to your mailing list.");
-              }}
-            >
-              <input type="email" required placeholder="your@email.com" aria-label="Email address" />
-              <button type="submit">Subscribe</button>
-            </form>
+
+            <div className="blog-news__side">
+              <form
+                className="blog-news__form"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  alert("Newsletter signup — connect this to your mailing list.");
+                }}
+              >
+                <label className="visually-hidden" htmlFor="news-email">
+                  Email address
+                </label>
+                <input id="news-email" type="email" required placeholder="Your email address" />
+                <button type="submit">
+                  Subscribe
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </button>
+              </form>
+              <p className="blog-news__fine">One email a month. Unsubscribe any time.</p>
+            </div>
           </div>
         </div>
       </section>

@@ -105,6 +105,104 @@ export default function CurtainStage() {
     return () => ctx.revert();
   }, []);
 
+  /*
+    One step down from the hero. While the page sits on the hero, a single
+    downward wheel tick, swipe or key press glides straight to the start of
+    the rail section instead of nudging the page a few pixels at a time.
+    Scrolling back up, and everything below the hero, behaves as normal.
+  */
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let tween = null;
+    let touchY = null;
+
+    // Where the rail's pinned stage begins: its top, less the sticky header.
+    const target = () => {
+      const next = root.nextElementSibling;
+      if (!next) return null;
+      const headerH =
+        parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 74;
+      return Math.round(next.getBoundingClientRect().top + window.scrollY - headerH);
+    };
+
+    // True while the view is still on the hero, short of the next section.
+    const onHero = () => {
+      const t = target();
+      return t != null && window.scrollY < t - 2;
+    };
+
+    const go = () => {
+      if (tween) return;
+      const t = target();
+      if (t == null) return;
+      const pos = { y: window.scrollY };
+      tween = gsap.to(pos, {
+        y: t,
+        duration: reduced ? 0 : 0.95,
+        ease: "power2.inOut",
+        onUpdate: () => window.scrollTo({ top: pos.y, behavior: "instant" }),
+        onComplete: () => {
+          // Let the trailing wheel momentum die out before handing back.
+          setTimeout(() => (tween = null), 350);
+        },
+      });
+    };
+
+    const onWheel = (e) => {
+      if (tween) {
+        e.preventDefault();
+        return;
+      }
+      if (e.deltaY > 0 && !e.ctrlKey && onHero()) {
+        e.preventDefault();
+        go();
+      }
+    };
+
+    const onTouchStart = (e) => {
+      touchY = e.touches[0]?.clientY ?? null;
+    };
+    const onTouchMove = (e) => {
+      if (tween) {
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
+      if (touchY == null || !onHero()) return;
+      // Finger moving up = page moving down.
+      if (touchY - e.touches[0].clientY > 8) {
+        if (e.cancelable) e.preventDefault();
+        touchY = null;
+        go();
+      }
+    };
+
+    const onKey = (e) => {
+      if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
+      const tag = document.activeElement?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      const down = ["ArrowDown", "PageDown"].includes(e.key) || (e.key === " " && !e.shiftKey);
+      if (down && onHero()) {
+        e.preventDefault();
+        go();
+      }
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("keydown", onKey);
+    return () => {
+      tween?.kill();
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, []);
+
   return (
     <section className="curtain" ref={rootRef} aria-label={site.name}>
       <div className="curtain__pin">
