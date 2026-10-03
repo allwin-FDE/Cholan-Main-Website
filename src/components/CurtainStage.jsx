@@ -93,6 +93,17 @@ export default function CurtainStage() {
       intro.add(() => caret(null), t + 1.8);
 
       /*
+        On the way out the stage drifts down and fades a little behind the
+        page, so leaving the hero has depth instead of sliding off flat.
+      */
+      gsap.to(root.querySelector(".curtain__inner"), {
+        yPercent: 16,
+        opacity: 0.4,
+        ease: "none",
+        scrollTrigger: { trigger: root, start: "top top", end: "bottom top", scrub: true },
+      });
+
+      /*
         The artwork decodes after first paint and moves every section below;
         re-measure the scroll triggers once it has landed.
       */
@@ -141,12 +152,14 @@ export default function CurtainStage() {
       const pos = { y: window.scrollY };
       tween = gsap.to(pos, {
         y: t,
-        duration: reduced ? 0 : 0.95,
-        ease: "power2.inOut",
+        // Moves the moment the wheel turns, then settles softly — no
+        // dead start for the page to feel stuck in.
+        duration: reduced ? 0 : 1.1,
+        ease: "power3.out",
         onUpdate: () => window.scrollTo({ top: pos.y, behavior: "instant" }),
         onComplete: () => {
           // Let the trailing wheel momentum die out before handing back.
-          setTimeout(() => (tween = null), 350);
+          setTimeout(() => (tween = null), 150);
         },
       });
     };
