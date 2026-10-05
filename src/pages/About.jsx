@@ -22,10 +22,10 @@ gsap.registerPlugin(ScrollTrigger);
 */
 
 const values = [
-  { title: "Traceability", text: "We know where every grain comes from.", icon: "grain" },
-  { title: "Minimal processing", text: "No unnecessary steps, no artificial polishing.", icon: "gear" },
-  { title: "Fair sourcing", text: "We buy direct from farmer families, and pay them first.", icon: "leaf" },
-  { title: "Consistency", text: "The same goodness in every pack.", icon: "badge" },
+  { title: "Know Your Grain", text: "We understand the journey behind every grain — from farm to family table.", icon: "grain" },
+  { title: "Keeping Nature Intact", text: "Minimal processing that respects the grain and preserves its natural character.", icon: "gear" },
+  { title: "Growing Together", text: "Building meaningful relationships with farmers who nurture every harvest.", icon: "leaf" },
+  { title: "Trust in Every Pack", text: "Delivering the same quality your family can depend on, every single time.", icon: "badge" },
 ];
 
 const timeline = [
@@ -287,12 +287,12 @@ export default function About() {
             <span className="ab-quote__rule" />
           </div>
           <h1 className="ab-quote__text ab-rise">
-            {words("We refuse to sell grain")}
-            <br />
-            {words("we would not cook at home.")}
+            <span className="ab-quote__line">{words("Every grain holds a story.")}</span>
+            <span className="ab-quote__line">{words("Every meal creates a memory.")}</span>
           </h1>
           <p className="ab-quote__caption" data-reveal>
-            The same rice we trust in our home, now in yours.
+            From the fields that nurture our grains to the homes that cherish them, Cholan
+            preserves the connection between tradition, taste, and togetherness.
           </p>
         </div>
       </section>
@@ -310,10 +310,13 @@ export default function About() {
               <span className="ab-promise__mark" aria-hidden="true" lang="ta">
                 சோழன்
               </span>
-              <h2 className="ab-rise">{words("From generations of knowledge.")}</h2>
+              <h2 className="ab-rise">
+                <span className="ab-promise__line">{words("The wisdom of yesterday.")}</span>
+                <span className="ab-promise__line">{words("The goodness of tomorrow.")}</span>
+              </h2>
               <p data-reveal>
-                Time-tested practices, modern care, and the same honest approach — so every grain
-                you cook at home is one you can trust.
+                For generations, grains have been chosen with care. We continue that tradition by
+                combining age-old knowledge with modern quality practices.
               </p>
             </header>
 

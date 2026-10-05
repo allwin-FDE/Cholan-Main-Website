@@ -139,12 +139,21 @@
   color: var(--ab-green);
 }
 
+/* One sentence per line; when one wraps on a phone, its two lines are
+   evened out rather than one word left on its own. */
+.ab-quote__line {
+  display: block;
+  text-wrap: balance;
+}
+
+/* A full sentence, so set as reading text rather than a spaced-out label. */
 .ab-quote__caption {
-  margin: 0;
-  font-size: 0.78rem;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
+  max-width: 60ch;
+  margin: 0 auto;
+  font-size: clamp(0.98rem, 1.3vw, 1.12rem);
+  line-height: 1.65;
   color: var(--ink-soft);
+  text-wrap: balance;
 }
 
 /* ==========================================================================
@@ -185,6 +194,12 @@
   position: relative;
   max-width: 640px;
   margin: 0 auto clamp(40px, 5vw, 60px);
+}
+
+/* One sentence per line, each kept whole where it fits. */
+.ab-promise__line {
+  display: block;
+  text-wrap: balance;
 }
 
 .ab-promise__head p {
