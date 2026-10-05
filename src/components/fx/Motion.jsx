@@ -73,6 +73,9 @@ export default function Motion() {
       tl.set(cream, { yPercent: -100 })
         .to(panels.filter((p) => p !== cream), { yPercent: -100, duration: 0.6, stagger: 0.07, ease: "power4.inOut" }, 0.05);
     }
+    // Tell the page the sheet is clearing, so an entrance can play into view
+    // rather than behind it.
+    tl.call(() => window.dispatchEvent(new Event("fx:reveal")), null, withLogo ? 0.9 + hold : 0.3);
     playing.current = tl;
     return tl;
   };
@@ -86,6 +89,7 @@ export default function Motion() {
     wipedFor.current = pathname;
     if (!wipeRef.current || reduced()) {
       first.current = false;
+      window.dispatchEvent(new Event("fx:reveal"));
       return;
     }
     const withLogo = first.current || logoNext.current;

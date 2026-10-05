@@ -232,27 +232,11 @@
   text-wrap: balance;
 }
 
-/* ---- Typewriter ----
-   Each letter is its own span. The caret is drawn on the last letter typed,
-   absolutely, so it never pushes the line about as it moves along. */
-.curtain__ch {
-  position: relative;
-}
-
-.curtain__ch.is-caret::after {
-  content: "";
-  position: absolute;
-  right: -0.12em;
-  top: 0.08em;
-  bottom: 0.02em;
-  width: 0.06em;
-  border-radius: 1px;
-  background: var(--gold-600);
-  animation: curtain-caret 0.9s steps(1) infinite;
-}
-
-@keyframes curtain-caret {
-  50% { opacity: 0; }
+/* ---- Fade-in ----
+   One span per word, so the line can fade up word by word without ever
+   reflowing. */
+.curtain__w {
+  display: inline-block;
 }
 
 /* ---- Content ---- */
@@ -313,11 +297,12 @@
   length rather than flipping between strings, and defaulted to 0 so the
   staging below resolves even before the timeline sets it.
 */
-@property --rise {
-  syntax: "<length>";
+@property --slide {
+  syntax: "<length-percentage>";
   inherits: false;
   initial-value: 0px;
 }
+
 
 .curtain__pack {
   display: block;
@@ -328,8 +313,8 @@
   will-change: transform, opacity;
   transform-origin: 50% 100%;
   /* Upright throughout — the step, not rotation, carries the arrangement.
-     --rise is the entrance offset the timeline animates. */
-  transform: translateY(var(--rise, 0px));
+     --slide is the entrance offset the timeline animates. */
+  transform: translateX(var(--slide, 0px));
   /* Each bag overlaps the one before it. */
   margin-inline: clamp(-34px, -2.2vw, -10px);
 }

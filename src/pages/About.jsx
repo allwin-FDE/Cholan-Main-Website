@@ -301,14 +301,14 @@ export default function About() {
       <section className="ab-promise">
         <div className="container">
           <div className="ab-promise__card">
-            {/* "Cholan" in Tamil, faint behind the heading. */}
-            <span className="ab-promise__mark" aria-hidden="true" lang="ta">
-              சோழன்
-            </span>
-
             <header className="ab-promise__head">
               <span className="ab-eyebrow" data-reveal>
                 Our promise
+              </span>
+              {/* "Cholan" in Tamil, in outline, between the label and the
+                  heading. */}
+              <span className="ab-promise__mark" aria-hidden="true" lang="ta">
+                சோழன்
               </span>
               <h2 className="ab-rise">{words("From generations of knowledge.")}</h2>
               <p data-reveal>

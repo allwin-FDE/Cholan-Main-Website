@@ -187,7 +187,7 @@ export default function RailStory() {
         .fromTo(".rs__mist", { autoAlpha: 1, yPercent: 0 }, { autoAlpha: 0.15, yPercent: 18, duration: 20, ease: "sine.inOut" }, T + 9)
         // The brand line rises word by word as the temple clears the mist.
         .fromTo(".rs__brand-kicker", { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 4, ease: "power2.out" }, T + 8)
-        .fromTo(".rs__brand-title .rs__word > span", { yPercent: 110 }, { yPercent: 0, duration: 6, stagger: 0.8, ease: "power3.out" }, T + 9)
+        .fromTo(".rs__brand-title .rs__word > span", { yPercent: 140 }, { yPercent: 0, duration: 6, stagger: 0.8, ease: "power3.out" }, T + 9)
         .fromTo(".rs__brand-rule", { scaleX: 0 }, { scaleX: 1, duration: 6, ease: "power2.inOut" }, T + 14)
         .fromTo(".rs__brand-lede", { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 5, ease: "power2.out" }, T + 15)
         // A beat to take it in; the section then scrolls away on the temple

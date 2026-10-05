@@ -102,7 +102,7 @@ const FOOTER_LINKS = [
 
 const SOCIAL = [
   { href: site.social.instagram, label: "Instagram" },
-  { href: site.social.youtube, label: "YouTube" },
+  { href: site.social.linkedin, label: "LinkedIn" },
   { href: site.social.facebook, label: "Facebook" },
 ];
 

@@ -163,15 +163,15 @@
   text-align: center;
 }
 
-/* சோழன் — faint, behind the heading. Sized so the whole word always fits:
-   it renders ~4.6x its font size wide. */
+/* சோழன் — in outline, on its own line under the label and over the
+   heading. Sized so the whole word always fits: it renders ~4.6x its font
+   size wide. */
 .ab-promise__mark {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: clamp(8px, 2vw, 28px);
+  display: block;
+  /* Room underneath for the tail of ழ, which hangs below the line. */
+  margin: 6px 0 0.32em;
   font-family: "Noto Serif Tamil", "Nirmala UI", "Latha", serif;
-  font-size: min(16vw, 190px);
+  font-size: min(15vw, 132px);
   font-weight: 700;
   line-height: 1;
   white-space: nowrap;
@@ -539,21 +539,17 @@
 @media (max-width: 640px) {
   .ab-quote__glyph { font-size: 4rem; }
 
-  /* The promise, compacted: the Tamil word gets its own band above the
-     heading instead of crowding the label, and the four values sit as a
+  /* The promise, compacted: the four values sit as a
      2 x 2 grid of small tiles rather than a long single column. */
   .ab-promise__card { padding: 28px 14px 16px; border-radius: 22px; }
 
   .ab-promise__mark {
-    top: 18px;
+    margin: 4px 0 0.32em;
     font-size: 15vw;
     -webkit-text-stroke-width: 1.2px;
   }
 
-  .ab-promise__head {
-    padding-top: calc(15vw + 12px);
-    margin-bottom: 24px;
-  }
+  .ab-promise__head { margin-bottom: 24px; }
 
   .ab-promise__head p { font-size: 0.92rem; }
 

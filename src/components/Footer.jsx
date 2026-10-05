@@ -39,7 +39,7 @@ const icons = {
   arrow: "M5 12h14M13 6l6 6-6 6",
   facebook: "M14 8h3V4h-3a4 4 0 0 0-4 4v2H7v4h3v7h4v-7h3l1-4h-4V8.5a.5.5 0 0 1 .5-.5Z",
   instagram: "M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Zm5 13.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM17.5 6.5h.01",
-  youtube: "M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.3 5 12 5 12 5s-6.3 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8c1.5.4 7.8.4 7.8.4s6.3 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15V9l5.2 3L10 15Z",
+  linkedin: "M6 3h12a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3ZM8 10.5V17M8 7.5v.01M12 17v-6.5M12 13.5a2.5 2.5 0 0 1 5 0V17",
 };
 
 const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
@@ -128,8 +128,8 @@ export default function Footer() {
               <a href={site.social.instagram} target="_blank" rel="noreferrer" aria-label="Instagram">
                 <Icon d={icons.instagram} />
               </a>
-              <a href={site.social.youtube} target="_blank" rel="noreferrer" aria-label="YouTube">
-                <Icon d={icons.youtube} fill />
+              <a href={site.social.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                <Icon d={icons.linkedin} />
               </a>
             </div>
           </div>

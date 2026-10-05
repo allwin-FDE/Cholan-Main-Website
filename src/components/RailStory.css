@@ -138,10 +138,10 @@
   font-size: clamp(2rem, 4.4vw, 3.8rem);
   font-weight: 900;
   font-variation-settings: "opsz" 144;
-  line-height: 0.98;
+  line-height: 1.08;
   /* Open enough that the heavy letters and words read clearly apart. */
-  letter-spacing: 0.01em;
-  word-spacing: 0.08em;
+  letter-spacing: 0.035em;
+  word-spacing: 0.16em;
   color: var(--brand-900);
   text-wrap: balance;
 }
@@ -158,10 +158,15 @@
   visibility: hidden;
 }
 
+/* Wider than the stage by 8% each side: the clouds drift sideways as you
+   scroll (see RailStory.jsx), and at the stage's own width that drift
+   pulled their edge in and showed a strip of plain sky down one side. */
 .rs__clouds {
   position: absolute;
-  inset: 0;
-  width: 100%;
+  top: 0;
+  left: -8%;
+  width: 116%;
+  max-width: none;
   height: 100%;
   object-fit: cover;
 }
@@ -250,10 +255,10 @@
   font-size: clamp(2.2rem, 4.5vw, 4.6rem);
   font-weight: 900;
   font-variation-settings: "opsz" 144;
-  line-height: 0.94;
+  line-height: 1.06;
   /* Open enough that the heavy letters and words read clearly apart. */
-  letter-spacing: 0.01em;
-  word-spacing: 0.08em;
+  letter-spacing: 0.035em;
+  word-spacing: 0.16em;
   color: var(--brand-900);
 }
 
@@ -265,8 +270,10 @@
 .rs__word {
   display: inline-block;
   overflow: hidden;
-  padding-bottom: 0.08em;
-  margin-bottom: -0.08em;
+  /* Room below the baseline for the full descender of g, y and the like —
+     the mask would otherwise clip their tails. */
+  padding-bottom: 0.26em;
+  margin-bottom: -0.26em;
   vertical-align: top;
 }
 

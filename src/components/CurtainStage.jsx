@@ -7,8 +7,8 @@ import "./CurtainStage.css";
 gsap.registerPlugin(ScrollTrigger);
 
 /*
-  The hero. A static stage framed by carved pillars, the headline typed out
-  on the yellow over the three packs. It scrolls away like any section.
+  The hero. A static stage framed by carved pillars, the headline fading
+  in on the yellow over the three packs. It scrolls away like any section.
 */
 
 // A centred group: the big Karikalan bulk bag in front, flanked by the two
@@ -28,69 +28,61 @@ export default function CurtainStage() {
     const root = rootRef.current;
     if (!root) return;
 
+    let stopWaiting = null;
     const ctx = gsap.context(() => {
-      // Entrance order: the centre bag first, then the two flanking it.
-      const packs = gsap.utils
-        .toArray(".curtain__pack", root)
-        .sort((a, b) => b.classList.contains("curtain__pack--hero") - a.classList.contains("curtain__pack--hero"));
-      const floor = root.querySelector(".curtain__floor");
-      const opening = root.querySelector(".curtain__opening");
-
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      /*
-        Reduced motion: no entrance. The stage is shown as it rests.
-      */
-      const chars = gsap.utils.toArray(".curtain__ch", root);
+      const words = gsap.utils.toArray(".curtain__w", root);
+      const left = root.querySelector(".curtain__pack--side-l");
+      const right = root.querySelector(".curtain__pack--side-r");
 
-      if (reduced) {
-        gsap.set([opening, ...packs, floor, ...chars], { opacity: 1, "--rise": "0px" });
-        gsap.set(opening, { y: 0 });
-        return;
-      }
-
-      /* ---- Entrance ---- */
+      // Reduced motion: no entrance. The stage is shown as it rests.
+      if (reduced) return;
 
       /*
-        The headline types itself out. Every letter is already laid out (just
-        invisible), so the line never reflows as it grows; the caret is drawn
-        on whichever letter was typed last. It starts once the opening wipe
-        has lifted off the page, with a little irregularity per keystroke and
-        a pause at the comma, so it reads as typed rather than revealed.
-      */
-      gsap.set(chars, { opacity: 0 });
-      let caretAt = null;
-      const caret = (el) => {
-        caretAt?.classList.remove("is-caret");
-        caretAt = el;
-        el?.classList.add("is-caret");
-      };
-      /*
-        The packs carry their staging (rotation, offset, scale) in CSS, so the
+        Entrance. The centre bag and its floor are on the stage from the
+        start; then, on their own:
+          1. the headline fades up, word by word;
+          2. the two flanking bags slide out from behind the centre bag, one
+             each side.
+
+        The packs carry their staging (rotation, offset) in CSS, so the
         entrance must NOT animate `transform` here — GSAP would overwrite the
-        whole property and flatten the group back into a row. It animates a
-        custom property the CSS transform consumes instead.
+        whole property. It animates the custom properties the CSS transform
+        consumes instead.
       */
-      gsap.set(packs, { opacity: 0, "--rise": "50px" });
-      gsap.set(floor, { opacity: 0, y: 16 });
+      gsap.set(words, { opacity: 0, y: 18, filter: "blur(6px)" });
+      gsap.set([left, right], { opacity: 0 });
+      // Tucked in behind the centre bag, to slide out from it.
+      gsap.set(left, { "--slide": "45%" });
+      gsap.set(right, { "--slide": "-45%" });
 
-      const intro = gsap.timeline({ defaults: { ease: "power2.out" } });
+      // Held until the page-load sheet starts to lift (fx:reveal), so the
+      // entrance plays in view; the timer is a fallback should that never come.
+      const intro = gsap.timeline({ paused: true });
+      const start = () => {
+        window.removeEventListener("fx:reveal", start);
+        clearTimeout(fallback);
+        intro.play();
+      };
+      window.addEventListener("fx:reveal", start);
+      const fallback = setTimeout(start, 3000);
+      stopWaiting = () => {
+        window.removeEventListener("fx:reveal", start);
+        clearTimeout(fallback);
+      };
       intro
-        /* Centre first, then the flanking pair — the group builds outward. */
-        .to(
-          packs,
-          { opacity: 1, "--rise": "0px", duration: 0.5, stagger: 0.09 },
-          0.15
-        )
-        .to(floor, { opacity: 1, y: 0, duration: 0.4 }, 0.45);
-
-      let t = 1.3;
-      chars.forEach((ch) => {
-        intro.set(ch, { opacity: 1 }, t).add(() => caret(ch), t);
-        t += ch.textContent === "," ? 0.32 : gsap.utils.random(0.04, 0.085);
-      });
-      // The caret blinks at the end of the line for a moment, then goes.
-      intro.add(() => caret(null), t + 1.8);
+        .to(words, {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          duration: 0.8,
+          stagger: 0.07,
+          ease: "power2.out",
+          clearProps: "filter",
+        })
+        .to([left, right], { opacity: 1, duration: 0.45, ease: "none" }, "-=0.25")
+        .to([left, right], { "--slide": "0%", duration: 0.85, ease: "power3.out" }, "<");
 
       /*
         On the way out the stage drifts down and fades a little behind the
@@ -113,7 +105,10 @@ export default function CurtainStage() {
       ).then(() => requestAnimationFrame(() => ScrollTrigger.refresh()));
     }, root);
 
-    return () => ctx.revert();
+    return () => {
+      stopWaiting?.();
+      ctx.revert();
+    };
   }, []);
 
   /*
@@ -228,14 +223,15 @@ export default function CurtainStage() {
           <div className="curtain__inner">
             {/* The headline and its line, set straight on the stage. */}
             <div className="curtain__opening">
-              {/* One span per letter for the typewriter; the heading is read
-                  out whole from its label. */}
+              {/* One span per word for the fade; the heading is read out
+                  whole from its label. */}
               <h1 className="curtain__lede" aria-label={HEADLINE}>
-                {Array.from(HEADLINE).map((c, i) => (
-                  <span key={i} className="curtain__ch" aria-hidden="true">
-                    {c}
-                  </span>
-                ))}
+                {HEADLINE.split(" ").flatMap((w, i) => [
+                  i > 0 ? " " : null,
+                  <span key={i} className="curtain__w" aria-hidden="true">
+                    {w}
+                  </span>,
+                ])}
               </h1>
             </div>
 

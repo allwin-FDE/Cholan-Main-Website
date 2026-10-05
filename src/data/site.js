@@ -17,9 +17,9 @@ export const site = {
   },
   hours: "Mon – Sat, 9:00 AM – 7:00 PM",
   social: {
-    instagram: "https://instagram.com/",
-    facebook: "https://facebook.com/",
-    youtube: "https://youtube.com/",
+    instagram: "https://www.instagram.com/cholanrice/",
+    facebook: "https://www.facebook.com/profile.php?id=61593548190956",
+    linkedin: "https://www.linkedin.com/company/cholan-rice-millets/",
   },
 };
 
