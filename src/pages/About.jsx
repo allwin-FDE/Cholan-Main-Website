@@ -11,7 +11,6 @@ gsap.registerPlugin(ScrollTrigger);
   About — one light, cream page, built from the approved reference:
 
     1. The rule      a single quote, centred, between gold rules
-    2. Our story     the packs beside the story, stamped "Trusted since 1998"
     3. Our promise   four commitments in one card, icon over each
     4. Our journey   milestones on a spine that fills as you scroll
     5. Our products  the bags, and the way to the full range
@@ -139,103 +138,6 @@ function Icon({ name, className = "" }) {
 const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
   `${site.address.line1}, ${site.address.line2} ${site.address.pincode}, ${site.address.state}`
 )}`;
-
-/*
-  "Trusted since 1998" as a struck gold medallion.
-
-  Built in layers, the way a real seal is made: a serrated rim, a bevelled
-  ring, a polished face, a ring of raised beads, an engraved inner line, and
-  lettering stamped into the metal. The metal is gradients, not a flat fill —
-  a sweep of highlight across the rim and a lit face — which is what reads as
-  gold rather than yellow. The lettering is embossed with a pale copy one
-  unit below it, the highlight a real stamp catches on its lower edge.
-*/
-const SEAL_TEETH = 36;
-const sealRim = (() => {
-  const pts = [];
-  for (let i = 0; i < SEAL_TEETH * 2; i++) {
-    const r = i % 2 ? 93 : 98.5;
-    const t = (Math.PI * i) / SEAL_TEETH - Math.PI / 2;
-    pts.push(`${(100 + r * Math.cos(t)).toFixed(2)},${(100 + r * Math.sin(t)).toFixed(2)}`);
-  }
-  return `M${pts.join("L")}Z`;
-})();
-const sealBeads = Array.from({ length: 56 }, (_, i) => {
-  const t = (2 * Math.PI * i) / 56;
-  return [100 + 81 * Math.cos(t), 100 + 81 * Math.sin(t)];
-});
-
-function GoldSeal() {
-  return (
-    <svg className="ab-seal" viewBox="0 0 200 200" role="img" aria-label="Trusted since 1998">
-      <defs>
-        {/* Polished rim: dark, bright, dark again, as light rakes across it. */}
-        <linearGradient id="seal-rim" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#8a5a12" />
-          <stop offset="0.2" stopColor="#e8bf5a" />
-          <stop offset="0.36" stopColor="#fff0bf" />
-          <stop offset="0.52" stopColor="#d19a2e" />
-          <stop offset="0.74" stopColor="#7d5210" />
-          <stop offset="1" stopColor="#d9ac48" />
-        </linearGradient>
-        {/* The bevel runs the opposite way, so the ring reads as sunk. */}
-        <linearGradient id="seal-bevel" x1="1" y1="1" x2="0" y2="0">
-          <stop offset="0" stopColor="#fbe3a0" />
-          <stop offset="0.5" stopColor="#b98424" />
-          <stop offset="1" stopColor="#6e470c" />
-        </linearGradient>
-        {/* The face, lit from the upper left. */}
-        <radialGradient id="seal-face" cx="0.38" cy="0.32" r="0.8">
-          <stop offset="0" stopColor="#fff5d2" />
-          <stop offset="0.35" stopColor="#f2cf74" />
-          <stop offset="0.72" stopColor="#d6a13a" />
-          <stop offset="1" stopColor="#a8741c" />
-        </radialGradient>
-        <linearGradient id="seal-gloss" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#fff" stopOpacity="0.55" />
-          <stop offset="1" stopColor="#fff" stopOpacity="0" />
-        </linearGradient>
-        <path id="seal-arc-top" d="M 42 100 A 58 58 0 0 1 158 100" />
-        <path id="seal-arc-bottom" d="M 48 108 A 52 52 0 0 0 152 108" />
-      </defs>
-
-      <path d={sealRim} fill="url(#seal-rim)" stroke="#6e470c" strokeWidth="0.6" />
-      <circle cx="100" cy="100" r="88" fill="url(#seal-bevel)" />
-      <circle cx="100" cy="100" r="85" fill="url(#seal-face)" />
-      {sealBeads.map(([x, y], i) => (
-        <circle key={i} cx={x} cy={y} r="1.25" className="ab-seal__bead" />
-      ))}
-      <circle cx="100" cy="100" r="75" className="ab-seal__engrave" />
-      <circle cx="100" cy="100" r="74" className="ab-seal__engrave-hi" />
-
-      {/* Arced lettering, embossed: highlight first, then the stamp. */}
-      {["ab-seal__emboss", "ab-seal__stamp"].map((c, i) => (
-        <g key={c} className={c} transform={i ? undefined : "translate(0 0.9)"}>
-          <text className="ab-seal__arc">
-            <textPath href="#seal-arc-top" startOffset="50%">
-              TRUSTED SINCE
-            </textPath>
-          </text>
-          <text className="ab-seal__arc ab-seal__arc--small">
-            <textPath href="#seal-arc-bottom" startOffset="50%">
-              SALEM · TAMIL NADU
-            </textPath>
-          </text>
-          <text x="100" y="116" className="ab-seal__year">
-            1998
-          </text>
-          {/* Three stars beneath the year, the middle one larger. */}
-          <text x="88" y="134" className="ab-seal__star">★</text>
-          <text x="100" y="135" className="ab-seal__star ab-seal__star--lg">★</text>
-          <text x="112" y="134" className="ab-seal__star">★</text>
-        </g>
-      ))}
-
-      {/* A soft gloss across the top half of the face. */}
-      <ellipse cx="92" cy="62" rx="58" ry="34" fill="url(#seal-gloss)" opacity="0.5" />
-    </svg>
-  );
-}
 
 // Each word in its own mask so a headline can rise into place. The space sits
 // between the masks — inside an inline-block it would be trimmed.
@@ -392,50 +294,6 @@ export default function About() {
           <p className="ab-quote__caption" data-reveal>
             The same rice we trust in our home, now in yours.
           </p>
-        </div>
-      </section>
-
-      {/* ---------- 2. OUR STORY ---------- */}
-      <section className="ab-story">
-        <div className="container ab-story__inner">
-          <div className="ab-story__media" data-reveal>
-            <div className="ab-story__frame">
-              <picture>
-                <source media="(max-width: 800px)" srcSet="/images/about-packs-md.webp" />
-                <img
-                  src="/images/about-packs.webp"
-                  alt="Moongil, Karikalan 25 kg and Emperor Basmati rice packs on a stone, among paddy and rice bowls"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </picture>
-            </div>
-
-            {/* "Trusted since 1998", ringed with laurel. */}
-            <GoldSeal />
-          </div>
-
-          <div className="ab-story__copy">
-            <span className="ab-eyebrow" data-reveal>
-              Our story
-            </span>
-            <h2 className="ab-rise">{words("We started where the paddy does.")}</h2>
-            <p data-reveal>
-              Cholan Rice &amp; Millets was born from a simple belief — that great rice begins at
-              the source. What started as a trading counter in Salem is now our own mill in
-              Coimbatore: we buy direct from farmer families, grade every batch ourselves, and pack
-              fresh against orders, so everyday favourites and heritage grains alike carry the
-              goodness of the field and the trust of generations.
-            </p>
-            <div className="ab-story__actions" data-reveal>
-              <Link to="/products" className="ab-btn ab-btn--dark">
-                Explore Products <Icon name="arrow" />
-              </Link>
-              <Link to="/story" className="ab-btn ab-btn--outline">
-                Our Story
-              </Link>
-            </div>
-          </div>
         </div>
       </section>
 
