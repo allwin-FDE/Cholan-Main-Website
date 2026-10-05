@@ -1,11 +1,36 @@
-.contact {
-  display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
-  gap: 56px;
-  align-items: start;
+/*
+  Three steps, one under the other: the enquiry form, then the direct
+  contacts, then the map. Each is centred at a comfortable reading width.
+*/
+.contact-step + .contact-step { padding-top: 0; }
+
+.contact-step h2 { font-size: 1.6rem; margin-bottom: 10px; }
+
+.contact__head {
+  max-width: 640px;
+  margin: 0 auto 24px;
+  text-align: center;
 }
 
-.contact h2 { font-size: 1.6rem; margin-bottom: 10px; }
+.contact__head .lede { margin: 0; }
+
+/* ---- Reach us directly ---- */
+
+.contact__cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.contact__cards .infocard { margin-bottom: 0; }
+
+.contact__wa {
+  display: flex;
+  width: fit-content;
+  margin: 24px auto 0;
+}
 
 .infocard {
   display: flex;
@@ -42,15 +67,42 @@
 
 .infocard .muted { font-size: 0.84rem; }
 
-.map__ph {
-  margin-top: 22px;
-  aspect-ratio: 16 / 10;
-  border-radius: var(--radius);
+/* ---- Map ---- */
+
+.contact__map {
+  max-width: 980px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 8;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface-alt);
+  box-shadow: var(--shadow-sm);
 }
+
+.contact__map iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.contact__directions {
+  display: block;
+  width: fit-content;
+  margin: 16px auto 0;
+  font-weight: 600;
+  color: var(--brand-700, var(--brand-800));
+  border-bottom: 1px solid currentColor;
+}
+
+.contact__directions:hover { color: var(--gold-600); }
 
 /* ---- Form ---- */
 
 .contact__form {
+  max-width: 760px;
+  margin: 0 auto;
   /* Scrolled to from a product's Enquire: clear of the sticky header. */
   scroll-margin-top: calc(var(--header-h, 74px) + 16px);
   padding: 34px;
@@ -87,7 +139,8 @@
 .form__note { font-size: 0.8rem; margin: 14px 0 0; text-align: center; }
 
 @media (max-width: 900px) {
-  .contact { grid-template-columns: 1fr; gap: 36px; }
+  .contact__cards { grid-template-columns: 1fr; max-width: 520px; }
+  .contact__map { aspect-ratio: 4 / 3; }
 }
 
 @media (max-width: 520px) {

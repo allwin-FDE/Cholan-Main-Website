@@ -5,6 +5,8 @@ import { getProduct } from "../data/products";
 import { site, whatsappLink } from "../data/site";
 import "./Contact.css";
 
+const mapQuery = `${site.address.line1}, ${site.address.line2} ${site.address.pincode}, ${site.address.state}`;
+
 const emptyForm = {
   name: "",
   phone: "",
@@ -31,7 +33,7 @@ export default function Contact() {
   );
   const [sent, setSent] = useState(false);
 
-  // On narrow screens the form sits below the contact details: bring it up.
+  // Arriving from a product, make sure the form is in view.
   useEffect(() => {
     if (!product) return;
     const t = setTimeout(() => {
@@ -78,52 +80,9 @@ export default function Contact() {
         lede="Household orders, bulk quotes or a question about a variety — we are happy to help."
       />
 
-      <section className="section">
-        <div className="container contact">
-          <div className="contact__info">
-            <h2>Reach us directly</h2>
-            <p className="lede">
-              The fastest way to get a reply is WhatsApp or a phone call.
-            </p>
-
-            <div className="infocard">
-              <span className="infocard__label">Phone</span>
-              <a href={`tel:${site.phoneRaw}`} className="infocard__value">
-                {site.phone}
-              </a>
-              <span className="muted">{site.hours}</span>
-            </div>
-
-            <div className="infocard">
-              <span className="infocard__label">Email</span>
-              <a href={`mailto:${site.email}`} className="infocard__value">
-                {site.email}
-              </a>
-            </div>
-
-            <div className="infocard">
-              <span className="infocard__label">Visit / Warehouse</span>
-              <address className="infocard__value infocard__address">
-                {site.address.line1}
-                <br />
-                {site.address.line2} – {site.address.pincode}
-                <br />
-                {site.address.state}
-              </address>
-            </div>
-
-            <a
-              href={whatsappLink()}
-              target="_blank"
-              rel="noreferrer"
-              className="btn btn--primary btn--block"
-            >
-              Message us on WhatsApp
-            </a>
-
-            <div className="ph map__ph">Google Map embed goes here</div>
-          </div>
-
+      {/* 1. The enquiry form, first. */}
+      <section className="section contact-step">
+        <div className="container">
           <div className="contact__form">
             <h2>Send an enquiry</h2>
             {sent && (
@@ -201,11 +160,86 @@ export default function Contact() {
                 Send enquiry
               </button>
               <p className="muted form__note">
-                No backend is wired up yet — this opens WhatsApp with your
-                message prefilled. Swap in a form service or API when ready.
+                Your enquiry opens in WhatsApp with the message ready to send.
               </p>
             </form>
           </div>
+        </div>
+      </section>
+
+      {/* 2. Phone, email and address. */}
+      <section className="section contact-step contact-step--direct">
+        <div className="container">
+          <div className="contact__head">
+            <h2>Reach us directly</h2>
+            <p className="lede">The fastest way to get a reply is WhatsApp or a phone call.</p>
+          </div>
+
+          <div className="contact__cards">
+            <div className="infocard">
+              <span className="infocard__label">Phone</span>
+              <a href={`tel:${site.phoneRaw}`} className="infocard__value">
+                {site.phone}
+              </a>
+              <span className="muted">{site.hours}</span>
+            </div>
+
+            <div className="infocard">
+              <span className="infocard__label">Email</span>
+              <a href={`mailto:${site.email}`} className="infocard__value">
+                {site.email}
+              </a>
+            </div>
+
+            <div className="infocard">
+              <span className="infocard__label">Visit / Warehouse</span>
+              <address className="infocard__value infocard__address">
+                {site.address.line1}
+                <br />
+                {site.address.line2} – {site.address.pincode}
+                <br />
+                {site.address.state}
+              </address>
+            </div>
+          </div>
+
+          <a
+            href={whatsappLink()}
+            target="_blank"
+            rel="noreferrer"
+            className="btn btn--primary contact__wa"
+          >
+            Message us on WhatsApp
+          </a>
+        </div>
+      </section>
+
+      {/* 3. Where to find us. */}
+      <section className="section contact-step">
+        <div className="container">
+          <div className="contact__head">
+            <h2>Find us</h2>
+            <p className="lede">
+              {site.address.line1}, {site.address.line2} – {site.address.pincode}
+            </p>
+          </div>
+          <div className="contact__map">
+            <iframe
+              title={`Map showing ${site.name}`}
+              src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+          </div>
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`}
+            target="_blank"
+            rel="noreferrer"
+            className="contact__directions"
+          >
+            Open in Google Maps
+          </a>
         </div>
       </section>
     </>
