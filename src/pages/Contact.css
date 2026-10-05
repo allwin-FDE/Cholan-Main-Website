@@ -1,35 +1,43 @@
 /*
-  Three steps, one under the other: the enquiry form, then the direct
-  contacts, then the map. Each is centred at a comfortable reading width.
+  Laptop and up: two columns — the direct contacts and the map on the left,
+  the enquiry form on the right. Phones and tablets stack the same three
+  blocks in source order instead: form, contacts, map (see the media query
+  at the end).
 */
-.contact-step + .contact-step { padding-top: 0; }
-
-.contact-step h2 { font-size: 1.6rem; margin-bottom: 10px; }
-
-.contact__head {
-  max-width: 640px;
-  margin: 0 auto 24px;
-  text-align: center;
+.contact {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  grid-template-areas:
+    "direct form"
+    "find   form";
+  grid-template-rows: auto 1fr;
+  gap: 22px 56px;
+  align-items: start;
 }
 
+.contact__form { grid-area: form; }
+.contact__direct { grid-area: direct; }
+.contact__find { grid-area: find; }
+
+.contact h2 { font-size: 1.6rem; margin-bottom: 10px; }
+
+.contact__head { margin-bottom: 18px; }
 .contact__head .lede { margin: 0; }
+
+/* The map sits straight under the WhatsApp button here, as before; its
+   heading only shows once the blocks stack. */
+.contact__find .contact__head { display: none; }
 
 /* ---- Reach us directly ---- */
 
-.contact__cards {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  max-width: 980px;
-  margin: 0 auto;
-}
+.contact__cards { display: grid; gap: 14px; }
 
 .contact__cards .infocard { margin-bottom: 0; }
 
 .contact__wa {
   display: flex;
-  width: fit-content;
-  margin: 24px auto 0;
+  width: 100%;
+  margin-top: 18px;
 }
 
 .infocard {
@@ -70,9 +78,7 @@
 /* ---- Map ---- */
 
 .contact__map {
-  max-width: 980px;
-  margin: 0 auto;
-  aspect-ratio: 16 / 8;
+  aspect-ratio: 16 / 10;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
@@ -90,7 +96,7 @@
 .contact__directions {
   display: block;
   width: fit-content;
-  margin: 16px auto 0;
+  margin: 14px 0 0;
   font-weight: 600;
   color: var(--brand-700, var(--brand-800));
   border-bottom: 1px solid currentColor;
@@ -101,8 +107,6 @@
 /* ---- Form ---- */
 
 .contact__form {
-  max-width: 760px;
-  margin: 0 auto;
   /* Scrolled to from a product's Enquire: clear of the sticky header. */
   scroll-margin-top: calc(var(--header-h, 74px) + 16px);
   padding: 34px;
@@ -138,9 +142,27 @@
 
 .form__note { font-size: 0.8rem; margin: 14px 0 0; text-align: center; }
 
+/* Phones and tablets: one column, in order — form, contacts, map — each
+   block centred. */
 @media (max-width: 900px) {
-  .contact__cards { grid-template-columns: 1fr; max-width: 520px; }
+  .contact {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "form" "direct" "find";
+    grid-template-rows: none;
+    gap: 56px;
+  }
+
+  .contact__form { width: 100%; max-width: 760px; margin: 0 auto; }
+
+  .contact__head { max-width: 640px; margin: 0 auto 24px; text-align: center; }
+  .contact__find .contact__head { display: block; }
+
+  .contact__cards { max-width: 520px; margin: 0 auto; }
+
+  .contact__wa { width: fit-content; margin: 24px auto 0; }
+
   .contact__map { aspect-ratio: 4 / 3; }
+  .contact__directions { margin: 16px auto 0; }
 }
 
 @media (max-width: 520px) {
