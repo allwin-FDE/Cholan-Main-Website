@@ -124,15 +124,23 @@
 .reviews {
   position: relative;
   overflow: hidden;
+  /* Tighter than a standard section: the sections either side already
+     bring their own space. */
+  padding-block: clamp(12px, 2vw, 28px);
 }
 
-.reviews .section-head { margin-bottom: 40px; }
+.reviews .section-head { margin-bottom: 28px; }
+
+/* ...and the sections either side give up most of their own edge toward it,
+   so the reviews sit close to what comes before and after. */
+.section:has(+ .reviews) { padding-bottom: clamp(20px, 3vw, 40px); }
+.reviews + .section { padding-top: clamp(20px, 3vw, 40px); }
 
 /* The ribbon: full-bleed, fading out at both edges. */
 .marquee {
   position: relative;
   overflow: hidden;
-  padding-block: 12px;
+  padding-block: 8px;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
 }
