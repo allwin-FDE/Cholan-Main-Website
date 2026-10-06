@@ -10,7 +10,7 @@ import "./Products.css";
 gsap.registerPlugin(Flip, ScrollTrigger);
 
 // Shown first, in this order.
-const PINNED = ["idly-rice", "karikalan-rice", "moongil-rice"];
+const PINNED = ["chennai-pattinam-idli-rice", "karikalan-rice", "moongil-ponni"];
 const pinRank = (p) => {
   const i = PINNED.indexOf(p.id);
   return i < 0 ? PINNED.length : i;

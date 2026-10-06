@@ -41,15 +41,16 @@
   --accent-soft: rgba(93, 122, 42, 0.12);
 }
 
-.card[data-cat="oils"] {
-  --tint-a: #fdefd2;
-  --tint-b: #f5c77a;
-  --glow: rgba(255, 248, 228, 0.95);
-  --accent: #b5670f;
-  --accent-soft: rgba(181, 103, 15, 0.12);
+/* Traditional rice: the red-brown of kavuni and samba. */
+.card[data-cat="traditional"] {
+  --tint-a: #f8e6df;
+  --tint-b: #e4b7a6;
+  --glow: rgba(255, 245, 240, 0.95);
+  --accent: #8e3b2b;
+  --accent-soft: rgba(142, 59, 43, 0.12);
 }
 
-.card[data-cat="pulses"] {
+.card[data-cat="grocery"] {
   --tint-a: #fbe8dc;
   --tint-b: #edbd9e;
   --glow: rgba(255, 246, 238, 0.95);

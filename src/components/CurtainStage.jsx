@@ -15,9 +15,9 @@ gsap.registerPlugin(ScrollTrigger);
 // A centred group: the big Karikalan bulk bag in front, flanked by the two
 // smaller packs set back and angled out a little.
 const PACKS = [
-  { src: "/images/stage-rajabogam.webp", alt: "Cholan Rajabogam 5 kg pack", cls: "side-l" },
+  { src: "/images/stage-chennai-pattinam.webp", alt: "Chennai Pattinam Ponni rice pack", cls: "side-l" },
   { src: "/images/stage-karikalan.webp", alt: "Karikalan 25 kg bulk pack", cls: "hero" },
-  { src: "/images/stage-gramiyam.webp", alt: "Gramiyam Bapatla Ponni 26 kg pack", cls: "side-r" },
+  { src: "/images/stage-moongil.webp", alt: "Cholan Moongil Ponni 26 kg pack", cls: "side-r" },
 ];
 
 const HEADLINE = "Carefully selected grains, packed with purpose.";

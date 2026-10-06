@@ -4,7 +4,7 @@ import CurtainStage from "../components/CurtainStage";
 import RailStory from "../components/RailStory";
 import TempleFlight from "../components/TempleFlight";
 import ProductCard from "../components/ProductCard";
-import { categories, featuredProducts } from "../data/products";
+import { categories, showcaseProducts } from "../data/products";
 import { site } from "../data/site";
 import { posts } from "../data/posts";
 import "./Home.css";
@@ -42,7 +42,7 @@ const testimonials = [
 
 export default function Home() {
   // One clean row of four; the rest live on the products page.
-  const featured = featuredProducts().slice(0, 4);
+  const featured = showcaseProducts(4);
 
   return (
     <>

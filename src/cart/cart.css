@@ -366,8 +366,8 @@
 }
 
 .cart__thumb[data-cat="millets"] { background: linear-gradient(160deg, #eef2de, #d3e0b0); }
-.cart__thumb[data-cat="oils"] { background: linear-gradient(160deg, #fdefd2, #f5c77a); }
-.cart__thumb[data-cat="pulses"] { background: linear-gradient(160deg, #fbe8dc, #edbd9e); }
+.cart__thumb[data-cat="traditional"] { background: linear-gradient(160deg, #f8e6df, #e4b7a6); }
+.cart__thumb[data-cat="grocery"] { background: linear-gradient(160deg, #fbe8dc, #edbd9e); }
 
 .cart__thumb img {
   width: 100%;

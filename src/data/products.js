@@ -1,377 +1,325 @@
-// Product catalogue. Prices in INR, taken from the current Cholan Rice store.
-// `packs` = the sizes each item is sold in. Add/edit freely — the UI adapts.
+// Product catalogue — the Cholan Rice and Millet Shops Pvt Ltd product list.
+// Each product lists the pack sizes it is sold in; `tamil` is the name as it
+// appears on the shop's own list. Prices are not confirmed yet, so every
+// pack is `price: null` (and prices are switched off in site.js).
+// Add/edit freely — the UI adapts.
 
 export const categories = [
   {
     slug: "rice",
     name: "Rice",
-    blurb: "Everyday Ponni, idly rice and traditional native varieties.",
-    image: "/images/cat-rice.jpg",
+    blurb: "Karikalan, Chennai Pattinam, Moongil Ponni, idli rice and more.",
+    image: "/images/categories/rice.webp",
+  },
+  {
+    slug: "traditional",
+    name: "Traditional Rice",
+    blurb: "Kavuni, Mappillai Samba, Karunkuruvai, Kerala Matta and hand-pounded rice.",
+    image: "/images/categories/traditional.webp",
   },
   {
     slug: "millets",
     name: "Millets",
-    blurb: "Native small millets — kambu, thinai, varagu, ragi and more.",
-    image: "/images/cat-millets.jpg",
+    blurb: "Kuthiraivali, samai, thinai, varagu, ragi and kollu.",
+    image: "/images/categories/millets.webp",
   },
   {
-    slug: "oils",
-    name: "Oils",
-    blurb: "Wood-pressed sesame and groundnut oil.",
-    image: "/images/cat-oils.jpg",
-  },
-  {
-    slug: "pulses",
-    name: "Pulses & Sugar",
-    blurb: "Dhal varieties and unrefined nattu sarkkarai.",
-    image: "/images/cat-pulses.jpg",
+    slug: "grocery",
+    name: "Grocery",
+    blurb: "Nattu ulundhu and unrefined nattu sakkarai.",
+    image: "/images/categories/grocery.webp",
   },
 ];
+
+const sizes = (...list) => list.map((size) => ({ size, price: null }));
 
 export const products = [
   // ---------- RICE ----------
   {
-    id: "rajabogam-ponni",
-    name: "Rajabogam Ponni Rice",
-    category: "rice",
-    tagline: "Our flagship Ponni, in the Cholan pack",
-    description:
-      "The Rajabogam grade — a full, well-aged Ponni milled for everyday sappadu. Soft, aromatic and consistent bag to bag. Sold in the 26 kg Cholan pack that messes and larger households buy month after month.",
-    packs: [
-      { size: "5 kg", price: 420 },
-      { size: "10 kg", price: 830 },
-      { size: "26 kg", price: 1980 },
-    ],
-    image: "/images/pack-rajabogam.webp",
-    featured: true,
-  },
-  {
-    id: "ponni-broken-rice",
-    name: "Ponni Broken Rice",
-    category: "rice",
-    tagline: "For kanji, pongal and everyday value",
-    description:
-      "Broken Ponni graded and cleaned to the same standard as our whole grain. Cooks quickly and soaks up flavour — the traditional choice for kanji, pongal, upma and idli batter, at a lower price per kilo.",
-    packs: [
-      { size: "5 kg", price: 260 },
-      { size: "10 kg", price: 500 },
-      { size: "26 kg", price: 1150 },
-    ],
-    image: "/images/pack-broken-ponni.webp",
-    featured: true,
-  },
-  {
-    id: "ponni-rice",
-    name: "Ponni Rice",
-    category: "rice",
-    tagline: "The everyday table rice of Tamil Nadu",
-    description:
-      "Medium-grain rice known for its soft texture and gentle aroma. Cooks fluffy and stays soft — the dependable choice for daily meals.",
-    packs: [
-      { size: "5 kg", price: 400 },
-      { size: "10 kg", price: 800 },
-      { size: "26 kg", price: 1900 },
-    ],
-    image: "/images/products/ponni-rice.webp",
-    featured: true,
-  },
-  {
-    id: "idly-rice",
-    name: "Idly Rice",
-    category: "rice",
-    tagline: "For soft idlis and crisp dosas",
-    description:
-      "Parboiled short-grain rice milled specifically for batter. Ferments well and gives you idlis that stay soft through the day.",
-    packs: [
-      { size: "5 kg", price: 280 },
-      { size: "10 kg", price: 530 },
-      { size: "26 kg", price: 1200 },
-    ],
-    image: "/images/products/idly-rice.webp",
-    featured: true,
-  },
-  {
     id: "karikalan-rice",
     name: "Karikalan Rice",
+    tamil: "கரிகாலன்",
     category: "rice",
-    tagline: "Premium Ponni, aged for flavour",
+    tagline: "கரிகாலன் · Premium Ponni",
     description:
-      "A well-aged premium Ponni grade. Lower moisture, better separation, richer aroma when cooked.",
-    packs: [
-      { size: "5 kg", price: 375 },
-      { size: "26 kg", price: 1750 },
-    ],
+      "Our Karikalan grade — a well-aged premium Ponni with good separation and a rich aroma when cooked. Sold from the 5 kg family bag up to the 26 kg sack.",
+    packs: sizes("5 kg", "10 kg", "26 kg"),
     image: "/images/products/karikalan-rice.webp",
     featured: true,
   },
   {
-    id: "moongil-rice",
-    name: "Moongil Rice",
+    id: "chennai-pattinam-idli-rice",
+    name: "Chennai Pattinam Idli Rice",
+    tamil: "சென்னைப்பட்டிணம் இட்லி",
     category: "rice",
-    tagline: "The Cholan Moongil pack, 26 kg",
+    tagline: "சென்னைப்பட்டிணம் இட்லி · For idli and dosa",
     description:
-      "Rice in the Cholan Moongil (மூங்கில்) pack, sold in the 26 kg bag for households and messes that buy by the month. Enquire on WhatsApp for the current rate.",
-    // No price published yet — the site shows "Price on request" until one is set.
-    packs: [{ size: "26 kg", price: null }],
+      "Idli rice in the Chennai Pattinam pack, milled for batter — for soft idlis and crisp dosas.",
+    packs: sizes("5 kg", "10 kg", "26 kg"),
+    image: "/images/products/idly-rice.webp",
+    featured: true,
+  },
+  {
+    id: "chennai-pattinam-rice",
+    name: "Chennai Pattinam Rice",
+    tamil: "சென்னைப்பட்டிணம்",
+    category: "rice",
+    tagline: "சென்னைப்பட்டிணம் · Everyday rice",
+    description:
+      "Everyday table rice in the Chennai Pattinam pack, from the 1 kg pack up to the 26 kg sack.",
+    packs: sizes("1 kg", "5 kg", "10 kg", "26 kg"),
+    image: "/images/products/ponni-rice.webp",
+    featured: true,
+  },
+  {
+    id: "moongil-ponni",
+    name: "Moongil Ponni Rice",
+    tamil: "மூங்கில் பொன்னி",
+    category: "rice",
+    tagline: "மூங்கில் பொன்னி · Ponni rice",
+    description: "Ponni rice in the Cholan Moongil pack, for daily meals.",
+    packs: sizes("5 kg", "10 kg", "26 kg"),
     image: "/images/products/moongil-rice.webp",
   },
   {
-    id: "gettimelam-ponni",
-    name: "Gettimelam Ponni Rice",
+    id: "thooyamalli-ponni-raw-rice",
+    name: "Thooyamalli Ponni Raw Rice",
+    tamil: "தூயமல்லி பொன்னி பச்சரிசி",
     category: "rice",
-    tagline: "Hardy grain, everyday value",
-    description:
-      "A firm-grained Ponni variety that holds shape well in cooking. A staple for larger households and messes.",
-    packs: [{ size: "26 kg", price: 1650 }],
+    tagline: "தூயமல்லி பொன்னி பச்சரிசி · Raw rice",
+    description: "Thooyamalli Ponni pacharisi — raw (unboiled) rice.",
+    packs: sizes("1 kg", "5 kg", "26 kg"),
+  },
+  {
+    id: "senthura-rice",
+    name: "Senthura Rice",
+    tamil: "செந்தூரா",
+    category: "rice",
+    tagline: "செந்தூரா",
+    description: "Senthura rice, in the 10 kg and 26 kg bags.",
+    packs: sizes("10 kg", "26 kg"),
+  },
+  {
+    id: "senthura-half-boil-rice",
+    name: "Senthura Half-Boil Rice",
+    tamil: "செந்தூரா HALFBOIL",
+    category: "rice",
+    tagline: "செந்தூரா · Half-boiled",
+    description: "The half-boiled Senthura rice, in the 26 kg bag.",
+    packs: sizes("26 kg"),
+  },
+  {
+    id: "kettimelam-rice",
+    name: "Kettimelam Rice",
+    tamil: "கெட்டிமேளம்",
+    category: "rice",
+    tagline: "கெட்டிமேளம்",
+    description: "Kettimelam rice, in the 26 kg bag for larger households and messes.",
+    packs: sizes("26 kg"),
     image: "/images/products/gettimelam-ponni.webp",
   },
   {
-    id: "tn-bpt-rice",
-    name: "TN BPT Rice",
+    id: "baahubali-rice",
+    name: "Baahubali Rice",
+    tamil: "பாகுபலி",
     category: "rice",
-    tagline: "Soft, light and easy to digest",
+    tagline: "பாகுபலி",
+    description: "Baahubali rice, in the 26 kg bag.",
+    packs: sizes("26 kg"),
+  },
+  {
+    id: "kurunai-rice",
+    name: "Kurunai Rice (Broken Rice)",
+    tamil: "குருணை அரிசி",
+    category: "rice",
+    tagline: "குருணை அரிசி · For kanji and pongal",
     description:
-      "The Tamil Nadu BPT grade — a lighter, softer grain that suits everyday sappadu and curd rice especially well.",
-    packs: [
-      { size: "5 kg", price: 315 },
-      { size: "10 kg", price: 600 },
-      { size: "26 kg", price: 1550 },
-    ],
-    image: "/images/products/tn-bpt-rice.webp",
+      "Broken rice, cleaned and graded — the traditional choice for kanji, pongal and upma. Sold in the 26 kg bag.",
+    packs: sizes("26 kg"),
+    image: "/images/pack-broken-ponni.webp",
+  },
+  {
+    id: "canteen-special-rice",
+    name: "Canteen Special Rice",
+    tamil: "கேண்டீன் ஸ்பெஷல்",
+    category: "rice",
+    tagline: "கேண்டீன் ஸ்பெஷல் · For canteens and messes",
+    description: "Our Canteen Special rice, for canteens, messes and bulk kitchens. Enquire for pack sizes.",
+    packs: [],
   },
   {
     id: "basmati-rice",
     name: "Basmati Rice",
+    tamil: "பாசுமதி அரிசி",
     category: "rice",
-    tagline: "Long grain, for biryani and pulao",
+    tagline: "பாசுமதி · For biryani and pulao",
     description:
-      "Fine long-grain basmati that elongates on cooking and stays separate. Made for biryani, pulao and ghee rice.",
-    packs: [],
+      "Long-grain basmati that stays separate when cooked — for biryani, pulao and ghee rice.",
+    packs: sizes("1 kg", "5 kg"),
     image: "/images/products/basmati-rice.webp",
   },
   {
-    id: "poongar-rice",
-    name: "Poongar Rice",
+    id: "chennai-gate-rice",
+    name: "Chennai Gate Rice",
+    tamil: "சென்னை கேட்",
     category: "rice",
-    tagline: "Traditional variety, valued in women's wellness",
-    description:
-      "A native red rice long recommended in traditional Tamil households for women's wellbeing. Nutty, wholesome and rich in fibre.",
-    packs: [
-      { size: "500 g", price: 60 },
-    ],
-    image: "/images/poongar-rice.jpg",
+    tagline: "சென்னை கேட்",
+    description: "Chennai Gate rice, in the 1 kg pack.",
+    packs: sizes("1 kg"),
   },
   {
-    id: "mapillai-samba",
-    name: "Mapillai Samba Rice",
+    id: "mappillai-seeraga-samba",
+    name: "Mappillai Seeraga Samba Rice",
+    tamil: "மாப்பிள்ளை சீரக சம்பா",
     category: "rice",
-    tagline: "The strength-giving heritage rice",
+    tagline: "மாப்பிள்ளை சீரக சம்பா",
+    description: "Seeraga samba rice, in the 1 kg pack.",
+    packs: sizes("1 kg"),
+  },
+  {
+    id: "special-idli-rice-pink",
+    name: "Special Idli Rice (Pink)",
+    tamil: "ஸ்பெஷல் இட்லி (Pink)",
+    category: "rice",
+    tagline: "ஸ்பெஷல் இட்லி · Pink pack",
+    description: "Special idli rice in the pink pack, for batter. Sold in the 1 kg pack.",
+    packs: sizes("1 kg"),
+  },
+
+  // ---------- TRADITIONAL RICE ----------
+  {
+    id: "mappillai-samba",
+    name: "Mappillai Samba Rice",
+    tamil: "மாப்பிள்ளைச் சம்பா",
+    category: "traditional",
+    tagline: "மாப்பிள்ளைச் சம்பா · Red heritage rice",
     description:
-      "A deep red traditional rice long associated with stamina and strength. Earthy flavour, high in fibre and iron.",
-    packs: [],
-    image: "/images/mapillai-samba.jpg",
+      "A deep red traditional rice with an earthy flavour. Sold in the 500 g pack and the 26 kg bag.",
+    packs: sizes("500 g", "26 kg"),
     featured: true,
   },
   {
     id: "karuppu-kavuni",
     name: "Karuppu Kavuni Rice",
-    category: "rice",
-    tagline: "Black rice — the 'forbidden' grain",
-    description:
-      "Antioxidant-rich black rice with a striking deep purple colour when cooked. Traditionally reserved for royalty.",
-    packs: [
-      { size: "500 g", price: 120 },
-    ],
-    image: "/images/karuppu-kavuni.jpg",
+    tamil: "கருப்புக் கவுனி அரிசி",
+    category: "traditional",
+    tagline: "கருப்புக் கவுனி · Black rice",
+    description: "Traditional black rice that cooks to a deep purple.",
+    packs: sizes("500 g"),
     featured: true,
   },
   {
     id: "sigappu-kavuni",
     name: "Sigappu Kavuni Rice",
-    category: "rice",
-    tagline: "Red heritage rice",
-    description:
-      "The red counterpart to Karuppu Kavuni. Mildly sweet, high in fibre, and a good everyday swap for white rice.",
-    packs: [],
-    image: "/images/sigappu-kavuni.jpg",
+    tamil: "சிகப்புக் கவுனி அரிசி",
+    category: "traditional",
+    tagline: "சிகப்புக் கவுனி · Red rice",
+    description: "The red counterpart to Karuppu Kavuni — a traditional red rice.",
+    packs: sizes("500 g"),
   },
   {
-    id: "handpound-rice",
-    name: "Handpound Rice (Kaikuthal)",
-    category: "rice",
-    tagline: "Minimally milled, bran intact",
-    description:
-      "Traditionally hand-pounded so the nutrient-rich bran layer stays on the grain. Closest you get to unpolished rice.",
-    packs: [],
-    image: "/images/handpound-rice.jpg",
+    id: "karunkuruvai",
+    name: "Karunkuruvai Rice",
+    tamil: "கருங்குறுவை",
+    category: "traditional",
+    tagline: "கருங்குறுவை · Traditional rice",
+    description: "Karunkuruvai, a native Tamil traditional rice variety.",
+    packs: sizes("500 g"),
   },
   {
-    id: "kerala-rice",
-    name: "Kerala Rice",
-    category: "rice",
-    tagline: "Rosematta — bold and hearty",
-    description:
-      "Parboiled rosematta rice with a distinctive reddish hue and robust bite. A Kerala kitchen staple.",
-    packs: [],
-    image: "/images/kerala-rice.jpg",
+    id: "kerala-matta-rice",
+    name: "Kerala Matta Rice",
+    tamil: "கேரளா மட்டை அரிசி",
+    category: "traditional",
+    tagline: "கேரளா மட்டை · Bold and hearty",
+    description: "Parboiled Kerala matta rice with its reddish hue and robust bite.",
+    packs: sizes("1 kg"),
+  },
+  {
+    id: "kaikuthal-rice",
+    name: "Kaikuthal Rice (Hand-pounded)",
+    tamil: "கைக்குத்தல் அரிசி",
+    category: "traditional",
+    tagline: "கைக்குத்தல் · Hand-pounded",
+    description: "Hand-pounded rice, minimally milled so the bran layer stays on the grain.",
+    packs: sizes("1 kg"),
   },
 
   // ---------- MILLETS ----------
   {
-    id: "regular-kambu",
-    name: "Kambu (Pearl Millet)",
+    id: "kuthiraivali",
+    name: "Kuthiraivali (Barnyard Millet)",
+    tamil: "குதிரைவாலி",
     category: "millets",
-    tagline: "Iron-rich and cooling",
-    description:
-      "Pearl millet, a summer staple. High in iron and fibre — good as kanji, koozh or steamed like rice.",
-    packs: [{ size: "500 g", price: 75 }],
-    image: "/images/kambu.jpg",
-  },
-  {
-    id: "traditional-kambu",
-    name: "Traditional Kambu",
-    category: "millets",
-    tagline: "Native landrace pearl millet",
-    description:
-      "The older native landrace of kambu — smaller grain, stronger flavour, traditionally valued as a body coolant.",
-    packs: [
-      { size: "500 g", price: 70 },
-      { size: "1 kg", price: 140 },
-    ],
-    image: "/images/traditional-kambu.jpg",
-  },
-  {
-    id: "ragi",
-    name: "Ragi (Finger Millet)",
-    category: "millets",
-    tagline: "Calcium powerhouse",
-    description:
-      "Finger millet, among the richest plant sources of calcium. Ideal for kanji, koozh and weaning food.",
-    packs: [
-      { size: "500 g", price: 30 },
-      { size: "1 kg", price: 60 },
-    ],
-    image: "/images/ragi.jpg",
-    featured: true,
-  },
-  {
-    id: "thinai",
-    name: "Thinai (Foxtail Millet)",
-    category: "millets",
-    tagline: "Light, low glycaemic",
-    description:
-      "Foxtail millet — light on the stomach with a low glycaemic index. A straight swap for rice in most dishes.",
-    packs: [
-      { size: "500 g", price: 65 },
-      { size: "1 kg", price: 130 },
-    ],
-    image: "/images/thinai.jpg",
+    tagline: "குதிரைவாலி · Barnyard millet",
+    description: "Barnyard millet — quick to cook, good for pongal and upma.",
+    packs: sizes("500 g"),
   },
   {
     id: "samai",
     name: "Samai (Little Millet)",
+    tamil: "சாமை அரிசி",
     category: "millets",
-    tagline: "Fibre-dense and versatile",
-    description:
-      "Little millet, high in fibre and easy to cook. Works for pongal, upma, idli batter and lemon rice.",
-    packs: [
-      { size: "500 g", price: 65 },
-      { size: "1 kg", price: 130 },
-    ],
-    image: "/images/samai.jpg",
+    tagline: "சாமை · Little millet",
+    description: "Little millet, easy to cook. Works for pongal, upma, idli batter and lemon rice.",
+    packs: sizes("500 g"),
+  },
+  {
+    id: "thinai",
+    name: "Thinai (Foxtail Millet)",
+    tamil: "தினை அரிசி",
+    category: "millets",
+    tagline: "தினை · Foxtail millet",
+    description: "Foxtail millet — light on the stomach and a straight swap for rice in most dishes.",
+    packs: sizes("500 g"),
   },
   {
     id: "varagu",
     name: "Varagu (Kodo Millet)",
+    tamil: "வரகு அரிசி",
     category: "millets",
-    tagline: "Traditionally used for weight management",
-    description:
-      "Kodo millet, valued for its high fibre content and slow release of energy. A common choice for diabetic-friendly meals.",
-    packs: [
-      { size: "500 g", price: 60 },
-      { size: "1 kg", price: 120 },
-    ],
-    image: "/images/varagu.jpg",
+    tagline: "வரகு · Kodo millet",
+    description: "Kodo millet, a traditional everyday millet.",
+    packs: sizes("500 g"),
   },
   {
-    id: "kuthiraivali",
-    name: "Kuthiraivali (Barnyard Millet)",
+    id: "ragi",
+    name: "Ragi (Finger Millet)",
+    tamil: "ராகி (கேழ்வரகு)",
     category: "millets",
-    tagline: "Highest fibre of the small millets",
-    description:
-      "Barnyard millet — the highest in fibre among small millets, and quick to cook. Good for pongal and upma.",
-    packs: [
-      { size: "500 g", price: 70 },
-      { size: "1 kg", price: 140 },
-    ],
-    image: "/images/kuthiraivali.jpg",
-  },
-  {
-    id: "sigappu-aval",
-    name: "Sigappu Aval (Red Poha)",
-    category: "millets",
-    tagline: "Flattened red rice, ready in minutes",
-    description:
-      "Red rice flakes — a quick breakfast or snack base. Just soak, season and serve.",
-    packs: [
-      { size: "500 g", price: 45 },
-      { size: "1 kg", price: 90 },
-    ],
-    image: "/images/sigappu-aval.jpg",
-  },
-
-  // ---------- OILS ----------
-  {
-    id: "sesame-oil",
-    name: "Sesame Oil (Nallennai)",
-    category: "oils",
-    tagline: "Wood-pressed, unrefined",
-    description:
-      "Traditional wood-pressed gingelly oil. Rich aroma, no chemical extraction — for seasoning, pickles and daily cooking.",
-    packs: [
-      { size: "500 ml", price: 200 },
-      { size: "1 L", price: 380 },
-    ],
-    image: "/images/sesame-oil.jpg",
+    tagline: "ராகி (கேழ்வரகு) · Finger millet",
+    description: "Finger millet, for kanji, koozh and adai.",
+    packs: sizes("500 g"),
     featured: true,
   },
   {
-    id: "groundnut-oil",
-    name: "Groundnut Oil",
-    category: "oils",
-    tagline: "High smoke point, clean taste",
-    description:
-      "Wood-pressed groundnut oil that holds up to deep frying while keeping a clean, nutty flavour.",
-    packs: [
-      { size: "500 ml", price: 150 },
-      { size: "1 L", price: 300 },
-    ],
-    image: "/images/groundnut-oil.jpg",
+    id: "kollu",
+    name: "Kollu (Horse Gram)",
+    tamil: "கொள்ளு",
+    category: "millets",
+    tagline: "கொள்ளு · Horse gram",
+    description: "Kollu, long used in Tamil kitchens for rasam, sundal and podi.",
+    packs: sizes("500 g"),
   },
 
-  // ---------- PULSES & SUGAR ----------
+  // ---------- GROCERY ----------
   {
-    id: "horse-gram",
-    name: "Horse Gram (Kollu)",
-    category: "pulses",
-    tagline: "Traditional aid for weight management",
-    description:
-      "Kollu, a protein-dense pulse long used in Tamil kitchens for rasam, sundal and podi.",
-    packs: [{ size: "500 g", price: 50 }],
-    image: "/images/horse-gram.jpg",
+    id: "nattu-ulundhu",
+    name: "Nattu Ulundhu (Native Urad Dal)",
+    tamil: "நாட்டு உளுந்து",
+    category: "grocery",
+    tagline: "நாட்டு உளுந்து · Native urad",
+    description: "Native urad, for idli and dosa batter, vadai and more.",
+    packs: sizes("500 g"),
   },
   {
-    id: "nattu-sarkkarai",
-    name: "Nattu Sarkkarai",
-    category: "pulses",
-    tagline: "Unrefined cane sugar",
-    description:
-      "Traditional unrefined cane sugar with its minerals intact. A direct replacement for white sugar in coffee, sweets and baking.",
-    packs: [
-      { size: "500 g", price: 50 },
-      { size: "1 kg", price: 90 },
-    ],
-    image: "/images/nattu-sarkkarai.jpg",
+    id: "nattu-sakkarai",
+    name: "Nattu Sakkarai",
+    tamil: "நாட்டுச் சர்க்கரை",
+    category: "grocery",
+    tagline: "நாட்டுச் சர்க்கரை · Unrefined cane sugar",
+    description: "Traditional unrefined cane sugar — for coffee, sweets and baking in place of white sugar.",
+    packs: sizes("500 g"),
   },
 ];
 
@@ -382,6 +330,13 @@ export const getByCategory = (slug) =>
   slug === "all" ? products : products.filter((p) => p.category === slug);
 
 export const featuredProducts = () => products.filter((p) => p.featured);
+
+// The home page row: bestsellers with a pack photo first, then any other
+// product with a photo, so the row is never a wall of lettered tiles.
+export const showcaseProducts = (n) => {
+  const photo = products.filter((p) => hasPhoto(p));
+  return [...photo.filter((p) => p.featured), ...photo.filter((p) => !p.featured)].slice(0, n);
+};
 
 // Lowest published price, or null when no pack has a price yet.
 export const priceFrom = (product) => {
