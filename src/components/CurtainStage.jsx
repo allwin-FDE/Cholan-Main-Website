@@ -112,10 +112,12 @@ export default function CurtainStage() {
   }, []);
 
   /*
-    One step down from the hero. While the page sits on the hero, a single
-    downward wheel tick, swipe or key press glides straight to the start of
-    the rail section instead of nudging the page a few pixels at a time.
-    Scrolling back up, and everything below the hero, behaves as normal.
+    One step between the hero and the rail, either way. While the page sits
+    on the hero, a single downward wheel tick, swipe or key press glides
+    straight to the start of the rail section; from the start of the rail, a
+    single upward one glides straight back to the top of the hero. The page
+    never rests half-way between the two. Everything further into the rail
+    and below scrolls as normal.
   */
   useEffect(() => {
     const root = rootRef.current;
@@ -140,9 +142,17 @@ export default function CurtainStage() {
       return t != null && window.scrollY < t - 2;
     };
 
-    const go = () => {
-      if (tween) return;
+    // True from the hero down to just inside the rail (a quarter of a screen
+    // in, before its scene has moved on): scrolling up from here goes home.
+    const nearTop = () => {
       const t = target();
+      return t != null && window.scrollY > 2 && window.scrollY <= t + window.innerHeight * 0.25;
+    };
+
+    // Glide to the rail (down) or to the very top (up).
+    const go = (dir = 1) => {
+      if (tween) return;
+      const t = dir > 0 ? target() : 0;
       if (t == null) return;
       const pos = { y: window.scrollY };
       tween = gsap.to(pos, {
@@ -164,9 +174,13 @@ export default function CurtainStage() {
         e.preventDefault();
         return;
       }
-      if (e.deltaY > 0 && !e.ctrlKey && onHero()) {
+      if (e.ctrlKey) return;
+      if (e.deltaY > 0 && onHero()) {
         e.preventDefault();
-        go();
+        go(1);
+      } else if (e.deltaY < 0 && nearTop()) {
+        e.preventDefault();
+        go(-1);
       }
     };
 
@@ -178,12 +192,14 @@ export default function CurtainStage() {
         if (e.cancelable) e.preventDefault();
         return;
       }
-      if (touchY == null || !onHero()) return;
-      // Finger moving up = page moving down.
-      if (touchY - e.touches[0].clientY > 8) {
+      if (touchY == null) return;
+      // Finger moving up = page moving down, and the reverse.
+      const moved = touchY - e.touches[0].clientY;
+      const dir = moved > 8 && onHero() ? 1 : moved < -8 && nearTop() ? -1 : 0;
+      if (dir) {
         if (e.cancelable) e.preventDefault();
         touchY = null;
-        go();
+        go(dir);
       }
     };
 
@@ -192,9 +208,13 @@ export default function CurtainStage() {
       const tag = document.activeElement?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
       const down = ["ArrowDown", "PageDown"].includes(e.key) || (e.key === " " && !e.shiftKey);
+      const up = ["ArrowUp", "PageUp"].includes(e.key) || (e.key === " " && e.shiftKey);
       if (down && onHero()) {
         e.preventDefault();
-        go();
+        go(1);
+      } else if (up && nearTop()) {
+        e.preventDefault();
+        go(-1);
       }
     };
 
