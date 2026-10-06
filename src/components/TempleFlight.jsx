@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import useScrollStep, { topUnderHeader } from "./fx/useScrollStep";
 import "./TempleFlight.css";
 import { benefits } from "../data/benefits";
 
@@ -11,7 +12,8 @@ import { benefits } from "../data/benefits";
   cloud, then out over the Brihadeeswarar at golden hour, circling round to
   settle on the vimana head-on. It plays on its own clock once the section
   is in view — the scroll only moves the page — pauses when the section
-  leaves the screen, and holds on the temple when it ends, with a replay.
+  leaves the screen, and loops: it holds on the temple for a moment at the
+  end, then flies in again from the cloud.
 
   The source is 562 frames at 1920x1080, kept as every second frame (271)
   and drawn to a canvas:
@@ -39,13 +41,13 @@ import { benefits } from "../data/benefits";
 const FRAME_COUNT = 271;
 const LAST = FRAME_COUNT - 1;
 const FPS = 18;
+// Seconds the film rests on the temple before it loops.
+const HOLD = 2.5;
 const frameSrc = (size, i) => `/images/temple/${size}/${String(i).padStart(3, "0")}.webp`;
 
 export default function TempleFlight() {
   const rootRef = useRef(null);
   const canvasRef = useRef(null);
-  const replayRef = useRef(null);
-  const [ended, setEnded] = useState(false);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -306,7 +308,9 @@ export default function TempleFlight() {
     /* ---------- The clock ---------- */
 
     const fill = root.querySelector(".temple__progress-fill");
-    let playing = false;
+    let playing = false; // the film is advancing
+    let visible = false; // the section is on screen
+    let holdLeft = 0; // seconds left resting on the temple before the loop
     let raf = 0;
     let last = 0;
 
@@ -317,6 +321,19 @@ export default function TempleFlight() {
       raf = requestAnimationFrame(tick);
       const dt = Math.min((now - last) / 1000, 0.1);
       last = now;
+      if (!visible) return;
+
+      // Resting on the temple: once the hold runs out, back to the cloud.
+      if (holdLeft > 0) {
+        holdLeft -= dt;
+        if (holdLeft <= 0) {
+          state.frame = 0;
+          unsettle();
+          schedulePump();
+          playing = true;
+        }
+        return;
+      }
       if (!playing) return;
 
       const next = Math.min(LAST, state.frame + dt * FPS);
@@ -334,33 +351,21 @@ export default function TempleFlight() {
       if (state.frame >= LAST) {
         playing = false;
         settle(LAST);
-        setEnded(true);
+        holdLeft = HOLD;
       }
     };
 
+    // The words play once; the film keeps looping under them.
     const play = () => {
       words.play();
-      if (playing || state.frame >= LAST) return;
-      playing = true;
+      visible = true;
+      if (holdLeft <= 0) playing = true;
       last = performance.now();
     };
     const pause = () => {
-      playing = false;
+      visible = false;
       words.pause();
     };
-
-    // Replay from the cloud; the words stay up.
-    const replay = () => {
-      state.frame = 0;
-      unsettle();
-      setEnded(false);
-      schedulePump();
-      draw(true);
-      playing = true;
-      last = performance.now();
-    };
-    const replayBtn = replayRef.current;
-    replayBtn?.addEventListener("click", replay);
 
     raf = requestAnimationFrame((t) => {
       last = t;
@@ -390,11 +395,35 @@ export default function TempleFlight() {
       seen.disconnect();
       words.kill();
       restFade?.kill();
-      replayBtn?.removeEventListener("click", replay);
       frames.forEach((bm) => bm?.close());
       hqCache.forEach((p) => p.then((bm) => bm.close()).catch(() => {}));
     };
   }, []);
+
+  /*
+    One scroll, one section. Coming down out of the rail, a single scroll
+    lands the film exactly in frame; from there, one more goes on to the
+    next section, and one back up returns to the end of the rail (its
+    temple and brand line). The page never rests with the film half in view.
+  */
+  useScrollStep(rootRef, (dir, y) => {
+    const root = rootRef.current;
+    if (!root) return null;
+    const T = topUnderHeader(root); // the film exactly in frame
+    const N = T + root.offsetHeight; // the next section, under the header
+    const P = Math.round(root.getBoundingClientRect().top + y - window.innerHeight); // the rail, at its end
+    const at = (v) => Math.abs(y - v) <= 2;
+    if (dir > 0) {
+      if (at(T)) return N;
+      if (y > P - 2 && y < T) return T;
+      if (y > T && y < N - 2) return N;
+      return null;
+    }
+    if (at(T)) return P;
+    if (y > T && y <= N + window.innerHeight * 0.25) return T;
+    if (y > P + 2 && y < T) return P;
+    return null;
+  });
 
   // Each word in its own mask, so the lines rise into place.
   const words = (text) =>
@@ -435,20 +464,6 @@ export default function TempleFlight() {
             ))}
           </ul>
         </div>
-
-        <button
-          type="button"
-          ref={replayRef}
-          className={`temple__replay${ended ? " is-on" : ""}`}
-          tabIndex={ended ? 0 : -1}
-          aria-hidden={!ended || undefined}
-          aria-label="Replay the flight"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" />
-          </svg>
-          Replay
-        </button>
 
         <div className="temple__progress" aria-hidden="true">
           <span className="temple__progress-fill" />

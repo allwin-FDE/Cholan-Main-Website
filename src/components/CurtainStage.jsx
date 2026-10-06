@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { site } from "../data/site";
+import useScrollStep, { topUnderHeader } from "./fx/useScrollStep";
 import "./CurtainStage.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -114,122 +115,18 @@ export default function CurtainStage() {
   /*
     One step between the hero and the rail, either way. While the page sits
     on the hero, a single downward wheel tick, swipe or key press glides
-    straight to the start of the rail section; from the start of the rail, a
-    single upward one glides straight back to the top of the hero. The page
-    never rests half-way between the two. Everything further into the rail
-    and below scrolls as normal.
+    straight to the start of the rail section; from the start of the rail
+    (up to a quarter of a screen in, before its scene has moved on), a single
+    upward one glides straight back to the top. The page never rests half-way
+    between the two. Further into the rail, and below, scrolls as normal.
   */
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let tween = null;
-    let touchY = null;
-
-    // Where the rail's pinned stage begins: its top, less the sticky header.
-    const target = () => {
-      const next = root.nextElementSibling;
-      if (!next) return null;
-      const headerH =
-        parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 74;
-      return Math.round(next.getBoundingClientRect().top + window.scrollY - headerH);
-    };
-
-    // True while the view is still on the hero, short of the next section.
-    const onHero = () => {
-      const t = target();
-      return t != null && window.scrollY < t - 2;
-    };
-
-    // True from the hero down to just inside the rail (a quarter of a screen
-    // in, before its scene has moved on): scrolling up from here goes home.
-    const nearTop = () => {
-      const t = target();
-      return t != null && window.scrollY > 2 && window.scrollY <= t + window.innerHeight * 0.25;
-    };
-
-    // Glide to the rail (down) or to the very top (up).
-    const go = (dir = 1) => {
-      if (tween) return;
-      const t = dir > 0 ? target() : 0;
-      if (t == null) return;
-      const pos = { y: window.scrollY };
-      tween = gsap.to(pos, {
-        y: t,
-        // Moves the moment the wheel turns, then settles softly — no
-        // dead start for the page to feel stuck in.
-        duration: reduced ? 0 : 1.1,
-        ease: "power3.out",
-        onUpdate: () => window.scrollTo({ top: pos.y, behavior: "instant" }),
-        onComplete: () => {
-          // Let the trailing wheel momentum die out before handing back.
-          setTimeout(() => (tween = null), 150);
-        },
-      });
-    };
-
-    const onWheel = (e) => {
-      if (tween) {
-        e.preventDefault();
-        return;
-      }
-      if (e.ctrlKey) return;
-      if (e.deltaY > 0 && onHero()) {
-        e.preventDefault();
-        go(1);
-      } else if (e.deltaY < 0 && nearTop()) {
-        e.preventDefault();
-        go(-1);
-      }
-    };
-
-    const onTouchStart = (e) => {
-      touchY = e.touches[0]?.clientY ?? null;
-    };
-    const onTouchMove = (e) => {
-      if (tween) {
-        if (e.cancelable) e.preventDefault();
-        return;
-      }
-      if (touchY == null) return;
-      // Finger moving up = page moving down, and the reverse.
-      const moved = touchY - e.touches[0].clientY;
-      const dir = moved > 8 && onHero() ? 1 : moved < -8 && nearTop() ? -1 : 0;
-      if (dir) {
-        if (e.cancelable) e.preventDefault();
-        touchY = null;
-        go(dir);
-      }
-    };
-
-    const onKey = (e) => {
-      if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
-      const tag = document.activeElement?.tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
-      const down = ["ArrowDown", "PageDown"].includes(e.key) || (e.key === " " && !e.shiftKey);
-      const up = ["ArrowUp", "PageUp"].includes(e.key) || (e.key === " " && e.shiftKey);
-      if (down && onHero()) {
-        e.preventDefault();
-        go(1);
-      } else if (up && nearTop()) {
-        e.preventDefault();
-        go(-1);
-      }
-    };
-
-    window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-    window.addEventListener("keydown", onKey);
-    return () => {
-      tween?.kill();
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("keydown", onKey);
-    };
-  }, []);
+  useScrollStep(rootRef, (dir, y) => {
+    const rail = rootRef.current?.nextElementSibling;
+    if (!rail) return null;
+    const t = topUnderHeader(rail);
+    if (dir > 0) return y < t - 2 ? t : null;
+    return y > 2 && y <= t + window.innerHeight * 0.25 ? 0 : null;
+  });
 
   return (
     <section className="curtain" ref={rootRef} aria-label={site.name}>
